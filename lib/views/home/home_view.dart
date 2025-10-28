@@ -31,3 +31,38 @@ class HomeView extends StatelessWidget {
     );
   }
 }
+
+class HomeShellView extends StatefulWidget {
+  final Widget child;
+  const HomeShellView({super.key, required this.child});
+
+  @override
+  State<HomeShellView> createState() => _HomeShellViewState();
+}
+
+class _HomeShellViewState extends State<HomeShellView> {
+  int selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: widget.child,
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.map)),
+          BottomNavigationBarItem(icon: Icon(Icons.person)),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            selectedIndex = 0;
+            NavigationController.go(Routes.MAP);
+          } else if (index == 1) {
+            selectedIndex = 1;
+            NavigationController.go(Routes.PROFILE);
+          }
+          setState(() {});
+        },
+      ),
+    );
+  }
+}
