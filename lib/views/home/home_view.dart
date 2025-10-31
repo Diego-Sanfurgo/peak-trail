@@ -49,8 +49,8 @@ class _HomeShellViewState extends State<HomeShellView> {
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.map)),
-          BottomNavigationBarItem(icon: Icon(Icons.person)),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Mapa"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
         onTap: (index) {
           if (index == 0) {
