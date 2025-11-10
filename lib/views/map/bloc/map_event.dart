@@ -4,9 +4,9 @@ part of 'map_bloc.dart';
 sealed class MapEvent extends Equatable {}
 
 class MapCreated extends MapEvent {
-  final MapboxMap controller;
-
   MapCreated(this.controller);
+
+  final MapboxMap controller;
 
   @override
   List<Object?> get props => [controller];

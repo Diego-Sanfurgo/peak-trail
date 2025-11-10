@@ -33,8 +33,8 @@ class HomeView extends StatelessWidget {
 }
 
 class HomeShellView extends StatefulWidget {
-  final Widget child;
   const HomeShellView({super.key, required this.child});
+  final Widget child;
 
   @override
   State<HomeShellView> createState() => _HomeShellViewState();

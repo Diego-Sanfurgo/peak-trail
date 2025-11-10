@@ -13,15 +13,12 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  late final MapboxMap controller;
-  StreamSubscription? userPositionStream;
-
   MapBloc() : super(MapInitial()) {
     _init();
     on<MapCreated>((event, emit) async {
-      controller = event.controller;
+      _controller = event.controller;
 
-      controller.location.updateSettings(
+      _controller.location.updateSettings(
         LocationComponentSettings(
           enabled: true,
           pulsingEnabled: true,
@@ -36,7 +33,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ),
       );
 
-      PointAnnotationManager pointAnnotationManager = await controller
+      PointAnnotationManager pointAnnotationManager = await _controller
           .annotations
           .createPointAnnotationManager();
       PointAnnotationOptions pointAnnotationOptions = PointAnnotationOptions(
@@ -45,11 +42,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         iconSize: 1.5,
       );
       pointAnnotationManager.createMulti([pointAnnotationOptions]);
-      setupPositionTracking();
+      _setupPositionTracking();
     });
   }
+  late final MapboxMap _controller;
+  StreamSubscription? _userPositionStream;
 
-  _init() async {
+  Future<void> _init() async {
     MapboxOptions.setAccessToken(Environment.mapboxToken);
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
@@ -59,18 +58,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     log(statuses.toString());
   }
 
-  setupPositionTracking() async {
+  Future<void> _setupPositionTracking() async {
     geo.LocationSettings settings = geo.LocationSettings(
       accuracy: geo.LocationAccuracy.best,
       distanceFilter: 50,
     );
-    userPositionStream?.cancel();
-    userPositionStream =
+    _userPositionStream?.cancel();
+    _userPositionStream =
         geo.Geolocator.getPositionStream(locationSettings: settings).listen((
           geo.Position? position,
         ) {
           if (position != null) {
-            controller.setCamera(
+            _controller.setCamera(
               CameraOptions(
                 zoom: 12,
                 center: Point(
