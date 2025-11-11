@@ -133,12 +133,12 @@ class Properties {
   );
   final int gid;
   final int entidad;
-  final String fna;
-  final String gna;
-  final String nam;
+  final String? fna;
+  final String? gna;
+  final String? nam;
   final int alt;
-  final String fdc;
-  final String sag;
+  final String? fdc;
+  final String? sag;
 
   Properties copyWith({
     int? gid,

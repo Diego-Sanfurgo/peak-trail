@@ -11,3 +11,8 @@ class MapCreated extends MapEvent {
   @override
   List<Object?> get props => [controller];
 }
+
+class MapLoad extends MapEvent {
+  @override
+  List<Object?> get props => [];
+}

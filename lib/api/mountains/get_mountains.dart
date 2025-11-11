@@ -1,13 +1,14 @@
 import 'dart:convert';
-import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
+import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
-Future<Map<String, dynamic>?> getMountains() async {
+Future<List<Map>?> getMountains() async {
   try {
     final String jsonString = await rootBundle.loadString('data/peaks.json');
     final Map<String, dynamic> data = json.decode(jsonString);
-    return data;
+    final rawData = data['features'] as List;
+    return rawData.map((e) => e as Map).toList();
   } on Exception catch (e) {
     log(e.toString());
     return null;
