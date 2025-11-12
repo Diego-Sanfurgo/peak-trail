@@ -47,6 +47,14 @@ class _MapboxWidget extends StatefulWidget {
 
 class _MapboxWidgetState extends State<_MapboxWidget> {
   MapboxMap? mapController;
+  late final MapBloc bloc;
+  // Timer? idleTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = BlocProvider.of<MapBloc>(context);
+  }
 
   @override
   void dispose() {
@@ -68,9 +76,18 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
           key: ValueKey("map_widget"),
           onMapCreated: (controller) {
             mapController = controller;
-            BlocProvider.of<MapBloc>(context).add(MapCreated(controller));
+            bloc.add(MapCreated(controller));
           },
           mapOptions: MapOptions(pixelRatio: 2),
+          onCameraChangeListener: (cameraChangedEventData) {
+            if (mapController == null) return;
+            // idleTimer?.cancel();
+            // idleTimer = Timer(const Duration(milliseconds: 600), () async {
+            //   // await _onCameraIdle();
+            //   bloc.add(MapCameraChanged(cameraChangedEventData.cameraState));
+            // });
+            bloc.add(MapCameraChanged(cameraChangedEventData.cameraState));
+          },
           cameraOptions: CameraOptions(zoom: 5),
         );
       },

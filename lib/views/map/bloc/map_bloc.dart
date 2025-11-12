@@ -2,15 +2,18 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:geolocator/geolocator.dart' as geo;
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:meta/meta.dart';
-import 'package:peak_trail/controllers/image_controller.dart';
+import 'package:equatable/equatable.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+
 import 'package:peak_trail/environment/env.dart';
 import 'package:peak_trail/models/mountain.dart';
 import 'package:peak_trail/persistence/mountains/mountains_repository.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:peak_trail/views/map/functions/add_mountains.dart';
+
+import '../functions/filter_visible_points.dart';
+import '../functions/setup_tracking.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -19,7 +22,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   MapBloc() : super(MapStatus(isLoading: true)) {
     _init();
     on<MapCreated>(_onCreated);
-    on<MapLoad>(_onLoad);
+    on<MapReload>(_onReload);
+    on<MapCameraChanged>(_onCameraChanged);
   }
 
   late final MapboxMap _controller;
@@ -34,7 +38,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       Permission.locationWhenInUse,
     ].request();
     log(statuses.toString());
-    add(MapLoad());
+    add(MapReload());
   }
 
   Future<void> _onCreated(MapCreated event, Emitter<MapState> emit) async {
@@ -55,71 +59,62 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       ),
     );
 
-    PointAnnotationManager pointAnnotationManager = await _controller
-        .annotations
-        .createPointAnnotationManager();
+    // PointAnnotationManager pointAnnotationManager = await _controller
+    //     .annotations
+    //     .createPointAnnotationManager();
 
-    Set<Mountain> mountainList = await _mountainsRepository.getMountains();
+    // Set<Mountain> mountainList = await _mountainsRepository.getMountains();
 
-    final mountainIcon = await ImageController.loadImage(
-      AppAssets.mountainIcon,
+    // final mountainIcon = await ImageController.loadImage(
+    //   AppAssets.mountainIcon,
+    // );
+
+    // List<PointAnnotationOptions> annotations = [];
+    // for (var mountain in mountainList.take(100)) {
+    //   annotations.add(
+    //     PointAnnotationOptions(
+    //       geometry: Point(
+    //         coordinates: Position(
+    //           mountain.coordinates.lng,
+    //           mountain.coordinates.lat,
+    //         ),
+    //       ),
+    //       image: mountainIcon,
+    //       // iconImage: "mountain-15",
+    //       iconSize: 0.1,
+    //       textField: mountain.properties.nam,
+    //       textOffset: [0, 1.5],
+    //     ),
+    //   );
+    // }
+
+    // await pointAnnotationManager.createMulti(annotations);
+    // pointAnnotationManager.tapEvents(
+    //   onTap: (PointAnnotation annotation) {
+    //     log('Tapped mountain: ${annotation.textField}');
+    //     log(annotation.geometry.coordinates.toJson().toString());
+    //   },
+    // );
+
+    await addMountainsLayers(
+      _controller,
+      await _mountainsRepository.getGeoJsonMountains(),
     );
 
-    List<PointAnnotationOptions> annotations = [];
-    for (var mountain in mountainList.take(100)) {
-      annotations.add(
-        PointAnnotationOptions(
-          geometry: Point(
-            coordinates: Position(
-              mountain.coordinates.lng,
-              mountain.coordinates.lat,
-            ),
-          ),
-          image: mountainIcon,
-          // iconImage: "mountain-15",
-          iconSize: 0.1,
-          textField: mountain.properties.nam,
-          textOffset: [0, 1.5],
-        ),
-      );
-    }
+    setupPositionTracking(_controller, _userPositionStream);
 
-    await pointAnnotationManager.createMulti(annotations);
-    pointAnnotationManager.tapEvents(
-      onTap: (PointAnnotation annotation) {
-        log('Tapped mountain: ${annotation.textField}');
-        log(annotation.geometry.coordinates.toJson().toString());
-      },
-    );
-    _setupPositionTracking();
-
-    emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
+    emit(MapStatus(isLoading: false, mountains: []));
+    // emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
   }
 
-  Future<void> _onLoad(MapLoad event, Emitter<MapState> emit) async {
+  Future<void> _onReload(MapReload event, Emitter<MapState> emit) async {
     emit(MapStatus(isLoading: false));
   }
 
-  void _setupPositionTracking() {
-    geo.LocationSettings settings = geo.LocationSettings(
-      accuracy: geo.LocationAccuracy.best,
-      distanceFilter: 50,
-    );
-    _userPositionStream?.cancel();
-    _userPositionStream =
-        geo.Geolocator.getPositionStream(locationSettings: settings).listen((
-          geo.Position? position,
-        ) {
-          if (position != null) {
-            _controller.setCamera(
-              CameraOptions(
-                zoom: 12,
-                center: Point(
-                  coordinates: Position(position.longitude, position.latitude),
-                ),
-              ),
-            );
-          }
-        });
+  Future<void> _onCameraChanged(
+    MapCameraChanged event,
+    Emitter<MapState> emit,
+  ) async {
+    await filterVisiblePoints(_controller, event.cameraState);
   }
 }

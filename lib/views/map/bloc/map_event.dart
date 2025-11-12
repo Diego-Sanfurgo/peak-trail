@@ -12,7 +12,16 @@ class MapCreated extends MapEvent {
   List<Object?> get props => [controller];
 }
 
-class MapLoad extends MapEvent {
+class MapReload extends MapEvent {
   @override
   List<Object?> get props => [];
+}
+
+class MapCameraChanged extends MapEvent {
+  MapCameraChanged(this.cameraState);
+
+  final CameraState cameraState;
+
+  @override
+  List<Object?> get props => [cameraState];
 }

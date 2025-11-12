@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:peak_trail/api/mountains/get_geojson_mountains.dart';
 import 'package:peak_trail/api/mountains/get_mountains.dart';
 import 'package:peak_trail/models/mountain.dart';
 
@@ -13,18 +14,21 @@ class MountainsProvider {
       final List<Map>? data = await getMountains();
       if (data == null) return {};
 
-      // for (var rawMountain in data) {}
-
       return data
           .map((e) => Mountain.fromJson(e as Map<String, dynamic>))
           .toSet();
-
-      // return Set.from(
-      //   data.entries,
-      // ).map((e) => Mountain.fromJson(e.value)).toSet();
     } catch (e) {
       log(e.toString());
       return {};
+    }
+  }
+
+  Future<String> fetchGeoJsonMountains() async {
+    try {
+      return await getGeoJsonMountains();
+    } catch (e) {
+      log(e.toString());
+      return '';
     }
   }
 }
