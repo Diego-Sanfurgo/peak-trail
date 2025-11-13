@@ -24,6 +24,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapCreated>(_onCreated);
     on<MapReload>(_onReload);
     on<MapCameraChanged>(_onCameraChanged);
+    on<MapStyleLoaded>(_onStyleLoaded);
   }
 
   late final MapboxMap _controller;
@@ -48,6 +49,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(
         enabled: true,
         pulsingEnabled: true,
+        // locationPuck: LocationPuck(locationPuck2D: LocationPuck2D()),
         // showAccuracyRing: true,
         // locationPuck: LocationPuck(
         //   locationPuck2D: LocationPuck2D(),
@@ -117,4 +119,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     await filterVisiblePoints(_controller, event.cameraState);
   }
+
+  Future<void> _onStyleLoaded(
+    MapStyleLoaded event,
+    Emitter<MapState> emit,
+  ) async {}
 }

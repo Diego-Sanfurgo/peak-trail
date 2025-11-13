@@ -79,6 +79,7 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
             bloc.add(MapCreated(controller));
           },
           mapOptions: MapOptions(pixelRatio: 2),
+          cameraOptions: CameraOptions(zoom: 5),
           onCameraChangeListener: (cameraChangedEventData) {
             if (mapController == null) return;
             // idleTimer?.cancel();
@@ -88,7 +89,6 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
             // });
             bloc.add(MapCameraChanged(cameraChangedEventData.cameraState));
           },
-          cameraOptions: CameraOptions(zoom: 5),
         );
       },
     );

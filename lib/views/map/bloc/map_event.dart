@@ -25,3 +25,8 @@ class MapCameraChanged extends MapEvent {
   @override
   List<Object?> get props => [cameraState];
 }
+
+class MapStyleLoaded extends MapEvent {
+  @override
+  List<Object?> get props => [];
+}
