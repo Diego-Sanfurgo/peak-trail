@@ -30,3 +30,9 @@ class MapStyleLoaded extends MapEvent {
   @override
   List<Object?> get props => [];
 }
+
+class MapCameraToMe extends MapEvent {
+  @override
+  List<Object?> get props => [];
+  
+}

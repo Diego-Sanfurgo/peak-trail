@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-import 'bloc/map_bloc.dart';
+import '../home/bloc/map_bloc.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => MapBloc(),
-      child: const _MapViewWidget(),
-    );
+    return const _MapViewWidget();
+    // return BlocProvider(
+    //   create: (context) => MapBloc(),
+    //   child: const _MapViewWidget(),
+    // );
   }
 }
 
@@ -32,8 +33,77 @@ class _MapViewWidgetState extends State<_MapViewWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Map View')),
-      body: _MapboxWidget(),
+      // appBar: AppBar(title: const Text('Map View')),
+      body: SafeArea(child: _Body()),
+      // body: _MapboxWidget(),
+    );
+  }
+}
+
+class _Body extends StatefulWidget {
+  const _Body();
+
+  @override
+  State<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
+  late final ScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      controller: scrollController,
+      slivers: <Widget>[
+        SliverAppBar(
+          title: TextFormField(
+            decoration: InputDecoration(
+              suffixIcon: Icon(Icons.search_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+          ),
+        ),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Stack(
+            children: [
+              _MapboxWidget(),
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: FloatingActionButton(
+                  child: Icon(Icons.my_location_rounded),
+                  onPressed: () =>
+                      BlocProvider.of<MapBloc>(context).add(MapCameraToMe()),
+                ),
+              ),
+
+              Positioned(
+                top: 16,
+                right: 16,
+                child: FloatingActionButton.small(
+                  child: Icon(Icons.layers_rounded),
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -58,7 +128,7 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
 
   @override
   void dispose() {
-    mapController?.dispose();
+    // mapController?.dispose();
     super.dispose();
   }
 
@@ -78,6 +148,7 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
             mapController = controller;
             bloc.add(MapCreated(controller));
           },
+          styleUri: MapboxStyles.OUTDOORS,
           mapOptions: MapOptions(pixelRatio: 2),
           cameraOptions: CameraOptions(zoom: 5),
           onCameraChangeListener: (cameraChangedEventData) {

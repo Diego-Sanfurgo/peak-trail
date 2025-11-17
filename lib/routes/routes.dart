@@ -24,7 +24,6 @@ class AppRouter {
         ],
       ),
       GoRoute(path: "/", redirect: (context, state) => '/map'),
-      GoRoute(path: "/profile", builder: (context, state) => const HomeView()),
     ],
   );
 }

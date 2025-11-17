@@ -13,3 +13,12 @@ class AppUtil {
   static BuildContext get scaffoldContext =>
       scaffoldKey.currentContext as BuildContext;
 }
+
+class AppConstants {
+  static const String mountainsSourceId = 'mountains-source';
+  static const String mountainMarkerId = 'mountain-marker';
+  static const String clusterLayerId = 'cluster-layer';
+  static const String clusterCountId = 'cluster-count';
+  static const String singlePointId = 'unclustered-points';
+
+}

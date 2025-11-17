@@ -2,15 +2,16 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:peak_trail/environment/env.dart';
 import 'package:peak_trail/models/mountain.dart';
 import 'package:peak_trail/persistence/mountains/mountains_repository.dart';
-import 'package:peak_trail/views/map/functions/add_mountains.dart';
+import 'package:peak_trail/views/home/functions/add_mountains.dart';
 
 import '../functions/filter_visible_points.dart';
 import '../functions/setup_tracking.dart';
@@ -25,10 +26,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapReload>(_onReload);
     on<MapCameraChanged>(_onCameraChanged);
     on<MapStyleLoaded>(_onStyleLoaded);
+    on<MapCameraToMe>(_onCameraToMe);
   }
 
   late final MapboxMap _controller;
-  StreamSubscription? _userPositionStream;
+  StreamSubscription<geo.Position>? _userPositionStream;
   final MountainsRepository _mountainsRepository = MountainsRepository();
 
   Future<void> _init() async {
@@ -49,15 +51,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(
         enabled: true,
         pulsingEnabled: true,
-        // locationPuck: LocationPuck(locationPuck2D: LocationPuck2D()),
-        // showAccuracyRing: true,
-        // locationPuck: LocationPuck(
-        //   locationPuck2D: LocationPuck2D(),
-        //   // locationPuck3D: LocationPuck3D(
-        //   //   modelUri:
-        //   //       "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Embedded/Duck.gltf",
-        //   // ),
-        // ),
+        puckBearingEnabled: true,
+        showAccuracyRing: true,
+        pulsingMaxRadius: 50,
+        pulsingColor: Colors.green.toARGB32(),
       ),
     );
 
@@ -118,6 +115,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Emitter<MapState> emit,
   ) async {
     await filterVisiblePoints(_controller, event.cameraState);
+  }
+
+  Future<void> _onCameraToMe(
+    MapCameraToMe event,
+    Emitter<MapState> emit,
+  ) async {
+    geo.Position position = await geo.Geolocator.getCurrentPosition();
+    _controller.flyTo(
+      CameraOptions(
+        zoom: 12,
+        center: Point(
+          coordinates: Position(position.longitude, position.latitude),
+        ),
+      ),
+      MapAnimationOptions(duration: 500),
+    );
   }
 
   Future<void> _onStyleLoaded(

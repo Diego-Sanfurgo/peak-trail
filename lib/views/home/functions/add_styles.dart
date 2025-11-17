@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:peak_trail/controllers/image_controller.dart';
+import 'package:peak_trail/utils/constant_and_variables.dart';
 
 Future<void> addStyles(MapboxMap controller) async {
   try {
@@ -26,7 +27,7 @@ Future<void> addStyles(MapboxMap controller) async {
 
     await Future.delayed(const Duration(milliseconds: 500));
     controller.style.addStyleImage(
-      "mountain_marker",
+      AppConstants.mountainMarkerId,
       1,
       MbxImage(
         width: 24,
