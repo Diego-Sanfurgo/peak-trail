@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:peak_trail/routes/routes.dart';
 
+import 'controllers/location_service.dart';
 import 'utils/constant_and_variables.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await LocationService.instance.init();
   runApp(const App());
 }
 

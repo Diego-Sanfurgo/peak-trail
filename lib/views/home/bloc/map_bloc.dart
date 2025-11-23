@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:peak_trail/controllers/location_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -29,9 +30,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapCameraToMe>(_onCameraToMe);
   }
 
-  late final MapboxMap _controller;
-  StreamSubscription<geo.Position>? _userPositionStream;
+  MapboxMap? _controller;
   final MountainsRepository _mountainsRepository = MountainsRepository();
+  final LocationService _locationService = LocationService.instance;
 
   Future<void> _init() async {
     MapboxOptions.setAccessToken(Environment.mapboxToken);
@@ -47,7 +48,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Future<void> _onCreated(MapCreated event, Emitter<MapState> emit) async {
     _controller = event.controller;
 
-    _controller.location.updateSettings(
+    _controller!.location.updateSettings(
       LocationComponentSettings(
         enabled: true,
         pulsingEnabled: true,
@@ -96,13 +97,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // );
 
     await addMountainsLayers(
-      _controller,
+      _controller!,
       await _mountainsRepository.getGeoJsonMountains(),
     );
 
-    setupPositionTracking(_controller, _userPositionStream);
+    // setupPositionTracking(_controller!);
 
     emit(MapStatus(isLoading: false, mountains: []));
+    add(MapCameraToMe());
     // emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
   }
 
@@ -114,15 +116,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     MapCameraChanged event,
     Emitter<MapState> emit,
   ) async {
-    await filterVisiblePoints(_controller, event.cameraState);
+    if (_controller == null) return;
+    await filterVisiblePoints(_controller!, event.cameraState);
   }
 
   Future<void> _onCameraToMe(
     MapCameraToMe event,
     Emitter<MapState> emit,
   ) async {
-    geo.Position position = await geo.Geolocator.getCurrentPosition();
-    _controller.flyTo(
+    geo.Position? position = _locationService.lastPosition;
+    if (position == null) return;
+
+    _controller?.flyTo(
       CameraOptions(
         zoom: 12,
         center: Point(
