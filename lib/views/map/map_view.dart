@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -12,10 +10,6 @@ class MapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const _MapViewWidget();
-    // return BlocProvider(
-    //   create: (context) => MapBloc(),
-    //   child: const _MapViewWidget(),
-    // );
   }
 }
 
@@ -34,11 +28,7 @@ class _MapViewWidgetState extends State<_MapViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(title: const Text('Map View')),
-      body: SafeArea(child: _Body()),
-      // body: _MapboxWidget(),
-    );
+    return Scaffold(body: SafeArea(child: _Body()));
   }
 }
 
@@ -73,7 +63,7 @@ class _BodyState extends State<_Body> {
           bottom: 16,
           right: 16,
           child: FloatingActionButton(
-            heroTag: Key("layer_location"),
+            heroTag: Key("location_FAB"),
             child: Icon(Icons.my_location_rounded),
             onPressed: () =>
                 BlocProvider.of<MapBloc>(context).add(MapCameraToMe()),

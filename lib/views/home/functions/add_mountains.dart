@@ -5,7 +5,7 @@ import 'package:peak_trail/utils/constant_and_variables.dart';
 import 'package:peak_trail/views/home/functions/add_styles.dart';
 
 Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
-  controller.style.addSource(
+  await controller.style.addSource(
     GeoJsonSource(
       id: AppConstants.mountainsSourceId,
       data: geoJson,
@@ -66,7 +66,8 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
         1.0, // mostrarlo normalmente
       ],
 
-      textFieldExpression: ["get", "fna"],
+      textFieldExpression: ["get", "name"],
+      // textFieldExpression: ["get", "fna"],
       iconSize: 1,
       textOffset: [0, 1.8],
       textColor: Colors.black.toARGB32(),

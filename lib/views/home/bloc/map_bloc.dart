@@ -15,7 +15,6 @@ import 'package:peak_trail/persistence/mountains/mountains_repository.dart';
 import 'package:peak_trail/views/home/functions/add_mountains.dart';
 
 import '../functions/filter_visible_points.dart';
-import '../functions/setup_tracking.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
