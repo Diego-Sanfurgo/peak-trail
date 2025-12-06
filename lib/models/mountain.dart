@@ -4,35 +4,41 @@
 
 import 'dart:convert';
 
+import 'package:peak_trail/utils/normalize_map.dart';
+
 Mountain mountainFromJson(String str) => Mountain.fromJson(json.decode(str));
 
 String mountainToJson(Mountain data) => json.encode(data.toJson());
 
 class Mountain {
-
   Mountain({
     // required this.type,
     required this.id,
     required this.coordinates,
     // required this.geometryName,
     required this.properties,
-    required this.bbox,
+    // required this.bbox,
   });
 
   factory Mountain.fromJson(Map<String, dynamic> json) => Mountain(
     // type: json["type"],
-    id: json["id"],
+    id: json["properties"]["id"],
     coordinates: Coordinates.fromJson(json["geometry"]),
     // geometryName: json["geometry_name"],
     properties: Properties.fromJson(json["properties"]),
-    bbox: List<double>.from(json["bbox"].map((x) => x?.toDouble())),
+    // bbox: List<double>.from(json["bbox"].map((x) => x?.toDouble())),
   );
+
+  factory Mountain.fromFeature(Map<String?, Object?> rawFeature) {
+    final Map<String, dynamic> json = normalizeMap(rawFeature);
+    return Mountain.fromJson(json);
+  }
   // final String type;
   final String id;
   final Coordinates coordinates;
   // final String geometryName;
   final Properties properties;
-  final List<double> bbox;
+  // final List<double>? bbox;
 
   Mountain copyWith({
     // String? type,
@@ -40,14 +46,14 @@ class Mountain {
     Coordinates? coordinates,
     // String? geometryName,
     Properties? properties,
-    List<double>? bbox,
+    // List<double>? bbox,
   }) => Mountain(
     // type: type ?? this.type,
     id: id ?? this.id,
     coordinates: coordinates ?? this.coordinates,
     // geometryName: geometryName ?? this.geometryName,
     properties: properties ?? this.properties,
-    bbox: bbox ?? this.bbox,
+    // bbox: bbox ?? this.bbox,
   );
 
   Map<String, dynamic> toJson() => {
@@ -56,7 +62,7 @@ class Mountain {
     "geometry": coordinates.toJson(),
     // "geometry_name": geometryName,
     "properties": properties.toJson(),
-    "bbox": List<dynamic>.from(bbox.map((x) => x)),
+    // "bbox": List<dynamic>.from(bbox.map((x) => x)),
   };
 
   @override
@@ -68,10 +74,9 @@ class Mountain {
 }
 
 class Coordinates {
-
   Coordinates({
     // required this.type,
-    required this.coordinates,
+    required this.list,
     required this.lng,
     required this.lat,
   });
@@ -92,82 +97,89 @@ class Coordinates {
     );
     return Coordinates(
       // type: json["type"],
-      coordinates: coordinatesList,
+      list: coordinatesList,
       lng: coordinatesList.first,
       lat: coordinatesList.last,
     );
   }
   // final String type;
-  final List<double> coordinates;
+  final List<double> list;
   final double lng;
   final double lat;
 
   Map<String, dynamic> toJson() => {
     // "type": type,
-    "coordinates": List<dynamic>.from(coordinates.map((x) => x)),
+    "coordinates": List<dynamic>.from(list.map((x) => x)),
   };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Coordinates && other.lat == lat && other.lng == lng);
+
+  @override
+  int get hashCode => list.hashCode;
 }
 
 class Properties {
-
   Properties({
-    required this.gid,
-    required this.entidad,
-    required this.fna,
-    required this.gna,
-    required this.nam,
+    required this.id,
+    // required this.entidad,
+    // required this.fna,
+    // required this.gna,
+    required this.name,
     required this.alt,
-    required this.fdc,
-    required this.sag,
+    // required this.fdc,
+    // required this.sag,
   });
 
   factory Properties.fromJson(Map<String, dynamic> json) => Properties(
-    gid: json["gid"],
-    entidad: json["entidad"],
-    fna: json["fna"],
-    gna: json["gna"],
-    nam: json["nam"],
+    id: json["id"],
+    // entidad: json["entidad"],
+    // fna: json["fna"],
+    // gna: json["gna"],
+    name: json["name"],
     alt: json["alt"],
-    fdc: json["fdc"],
-    sag: json["sag"],
+    // fdc: json["fdc"],
+    // sag: json["sag"],
   );
-  final int gid;
-  final int entidad;
-  final String? fna;
-  final String? gna;
-  final String? nam;
-  final int alt;
-  final String? fdc;
-  final String? sag;
+  final String id;
+  // final int entidad;
+  // final String? fna;
+  // final String? gna;
+  final String? name;
+  final double? alt;
+  // final String? fdc;
+  // final String? sag;
 
   Properties copyWith({
-    int? gid,
-    int? entidad,
-    String? fna,
-    String? gna,
-    String? nam,
-    int? alt,
-    String? fdc,
-    String? sag,
+    String? id,
+    // int? entidad,
+    // String? fna,
+    // String? gna,
+    String? name,
+    double? alt,
+    // String? fdc,
+    // String? sag,
   }) => Properties(
-    gid: gid ?? this.gid,
-    entidad: entidad ?? this.entidad,
-    fna: fna ?? this.fna,
-    gna: gna ?? this.gna,
-    nam: nam ?? this.nam,
+    id: id ?? this.id,
+    // entidad: entidad ?? this.entidad,
+    // fna: fna ?? this.fna,
+    // gna: gna ?? this.gna,
+    name: name ?? this.name,
     alt: alt ?? this.alt,
-    fdc: fdc ?? this.fdc,
-    sag: sag ?? this.sag,
+    // fdc: fdc ?? this.fdc,
+    // sag: sag ?? this.sag,
   );
 
   Map<String, dynamic> toJson() => {
-    "gid": gid,
-    "entidad": entidad,
-    "fna": fna,
-    "gna": gna,
-    "nam": nam,
+    "id": id,
+    // "entidad": entidad,
+    // "fna": fna,
+    // "gna": gna,
+    "nam": name,
     "alt": alt,
-    "fdc": fdc,
-    "sag": sag,
+    // "fdc": fdc,
+    // "sag": sag,
   };
 }

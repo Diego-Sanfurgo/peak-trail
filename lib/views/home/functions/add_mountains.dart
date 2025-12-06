@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:peak_trail/models/cluster_feature.dart';
+import 'package:peak_trail/models/mountain.dart';
 import 'package:peak_trail/utils/constant_and_variables.dart';
 import 'package:peak_trail/views/home/functions/add_styles.dart';
 
@@ -59,6 +62,36 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
         ["has", "point_count"],
       ],
       iconImage: AppConstants.mountainMarkerId,
+      iconSizeExpression: [
+        "case",
+        [
+          "boolean",
+          ["feature-state", "selected"],
+          false,
+        ],
+        1.8, // tamaño cuando está seleccionado
+        1.0, // tamaño normal
+      ],
+      iconHaloColorExpression: [
+        "case",
+        [
+          "boolean",
+          ["feature-state", "selected"],
+          false,
+        ],
+        "#00B7FF", // Glow celeste
+        "rgba(0,0,0,0)", // Sin halo
+      ],
+      iconHaloWidthExpression: [
+        "case",
+        [
+          "boolean",
+          ["feature-state", "selected"],
+          false,
+        ],
+        2.5,
+        0.0,
+      ],
       iconOpacityExpression: [
         "case",
         ["has", "point_count"], // si es cluster
@@ -88,34 +121,64 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
 
 Future<void> _addOnTapListener(MapboxMap controller) async {
   controller.setOnMapTapListener((MapContentGestureContext mapContext) async {
-    final features = await controller.queryRenderedFeatures(
-      RenderedQueryGeometry.fromScreenCoordinate(mapContext.touchPosition),
-      RenderedQueryOptions(
-        layerIds: [AppConstants.clusterLayerId],
-        filter: null,
-      ),
-    );
+    final List<QueriedRenderedFeature?> features = await controller
+        .queryRenderedFeatures(
+          RenderedQueryGeometry.fromScreenCoordinate(mapContext.touchPosition),
+          RenderedQueryOptions(
+            layerIds: [AppConstants.clusterLayerId, AppConstants.singlePointId],
+            filter: null,
+          ),
+        );
 
     if (features.isEmpty) return;
 
-    final QueriedRenderedFeature? cluster = features.first;
-    final rawFeature = cluster!.queriedFeature.feature;
+    final QueriedRenderedFeature? feature = features.first;
+    final rawFeature = feature!.queriedFeature.feature;
+    if (feature.layers.contains(AppConstants.singlePointId)) {
+      final Mountain mountain = Mountain.fromFeature(rawFeature);
 
-    final ClusterFeature clusterFeature = ClusterFeature.fromFeature(
-      rawFeature,
-    );
+      // Des-seleccionar anterior
+      // if (_selectedFeatureId != null) {
+      //   await controller.setFeatureState(
+      //     AppConstants.mountainsSourceId,
+      //     _selectedFeatureId!,
+      //     {"selected": false},
+      //   );
+      // }
 
-    // Calcular el nuevo zoom ideal para expandir este clúster
-    final FeatureExtensionValue zoom = await controller
-        .getGeoJsonClusterExpansionZoom(
-          AppConstants.mountainsSourceId,
-          clusterFeature.toJson(),
-        );
+      // Seleccionar nuevo
+      await controller.setFeatureState(
+        AppConstants.mountainsSourceId,
+        null,
+        mountain.id,
+        jsonEncode({"selected": true}),
+      );
 
-    final point = Point.fromJson(clusterFeature.geometry.toJson());
-    await controller.easeTo(
-      CameraOptions(center: point, zoom: double.parse(zoom.value ?? "10")),
-      MapAnimationOptions(duration: 500),
-    );
+      // _selectedFeatureId = featureId;
+
+      final point = Point.fromJson(mountain.coordinates.toJson());
+      await controller.easeTo(
+        CameraOptions(center: point, zoom: 14.5),
+        MapAnimationOptions(duration: 500),
+      );
+    }
+    if (feature.layers.contains(AppConstants.clusterLayerId)) {
+      final ClusterFeature clusterFeature = ClusterFeature.fromFeature(
+        rawFeature,
+      );
+
+      // Calcular el nuevo zoom ideal para expandir este clúster
+      final FeatureExtensionValue zoom = await controller
+          .getGeoJsonClusterExpansionZoom(
+            AppConstants.mountainsSourceId,
+            clusterFeature.toJson(),
+          );
+
+      final point = Point.fromJson(clusterFeature.geometry.toJson());
+      await controller.easeTo(
+        CameraOptions(center: point, zoom: double.parse(zoom.value ?? "10")),
+        MapAnimationOptions(duration: 500),
+      );
+    }
   });
 }

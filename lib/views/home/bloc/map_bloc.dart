@@ -102,6 +102,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     // setupPositionTracking(_controller!);
 
+    // _locationTracking();
+
     emit(MapStatus(isLoading: false, mountains: []));
     add(MapCameraToMe());
     // emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
@@ -142,3 +144,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Emitter<MapState> emit,
   ) async {}
 }
+
+// Future<void> _locationTracking() async {
+//   final traceService = TraceService();
+//   traceService.onLocation.listen((p) {
+//     // actualizar UI: velocidad, altitud, desnivel, ETA calculado, etc.
+//   });
+
+//   // al iniciar:
+//   await traceService.startTracking();
+
+//   // para mostrar trazas offline:
+//   final traces = await traceService
+//       .getAllTraces(); // ordenadas por id/timestamp
+//   // muestra en mapa (e.g. flutter_map o google_maps_flutter)
+// }

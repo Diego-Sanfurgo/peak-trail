@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:peak_trail/utils/normalize_map.dart';
+
 ClusterFeature clusterFeatureFromJson(String str) =>
     ClusterFeature.fromJson(json.decode(str));
 
@@ -42,13 +44,8 @@ class ClusterFeature {
   );
 
   factory ClusterFeature.fromFeature(Map<String?, Object?> rawFeature) {
-    final Map<String, dynamic> json = _normalizeMap(rawFeature);
-    return ClusterFeature(
-      type: json["type"],
-      id: json["id"],
-      geometry: Geometry.fromJson(json["geometry"]),
-      properties: Properties.fromJson(json["properties"]),
-    );
+    final Map<String, dynamic> json = normalizeMap(rawFeature);
+    return ClusterFeature.fromJson(json);
   }
 
   Map<String, dynamic> toJson() => {
@@ -125,20 +122,4 @@ class Properties {
     "point_count_abbreviated": pointCountAbbreviated,
     "point_count": pointCount,
   };
-}
-
-Map<String, dynamic> _normalizeMap(Map? m) {
-  final result = <String, dynamic>{};
-  if (m == null) return result;
-  m.forEach((key, value) {
-    final k = key?.toString() ?? '';
-    result[k] = _normalizeValue(value);
-  });
-  return result;
-}
-
-dynamic _normalizeValue(dynamic v) {
-  if (v is Map) return _normalizeMap(v);
-  if (v is List) return v.map(_normalizeValue).toList();
-  return v;
 }
