@@ -26,7 +26,6 @@ dependencies:
   #map
   mapbox_maps_flutter: ^2.12.0
   geolocator: ^14.0.2
-  # flutter_map: ^8.2.2
   # latlong2: ^0.9.1
 
   #permissions
@@ -35,12 +34,21 @@ dependencies:
   #utils
   meta: ^1.16.0
 
+  #database
+  drift: ^2.30.0
+  drift_flutter: ^0.2.8
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
   bloc_lint: ^0.3.3
+  #database
+  drift_dev: ^2.30.0
+  build_runner: ^2.10.4
 
 # The following section is specific to Flutter packages.
 flutter:
