@@ -36,3 +36,8 @@ class MapCameraToMe extends MapEvent {
   List<Object?> get props => [];
   
 }
+
+class MapStartTracking extends MapEvent {
+  @override
+  List<Object?> get props => [];
+}

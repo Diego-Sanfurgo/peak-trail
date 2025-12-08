@@ -62,11 +62,22 @@ class _BodyState extends State<_Body> {
         Positioned(
           bottom: 16,
           right: 16,
-          child: FloatingActionButton(
-            heroTag: Key("location_FAB"),
-            child: Icon(Icons.my_location_rounded),
-            onPressed: () =>
-                BlocProvider.of<MapBloc>(context).add(MapCameraToMe()),
+          child: Column(
+            spacing: 8,
+            children: [
+              FloatingActionButton(
+                heroTag: Key("tracking_FAB"),
+                child: Icon(Icons.play_circle_outlined),
+                onPressed: () =>
+                    BlocProvider.of<MapBloc>(context).add(MapStartTracking()),
+              ),
+              FloatingActionButton(
+                heroTag: Key("location_FAB"),
+                child: Icon(Icons.my_location_rounded),
+                onPressed: () =>
+                    BlocProvider.of<MapBloc>(context).add(MapCameraToMe()),
+              ),
+            ],
           ),
         ),
 

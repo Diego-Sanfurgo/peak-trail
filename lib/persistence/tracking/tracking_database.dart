@@ -24,7 +24,10 @@ class TrackingPoints extends Table {
 
 @DriftDatabase(tables: [TrackingPoints])
 class TrackingDatabase extends _$TrackingDatabase {
-  TrackingDatabase() : super(_openConnection());
+  static final TrackingDatabase _instance = TrackingDatabase._();
+  factory TrackingDatabase() => _instance;
+
+  TrackingDatabase._() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;

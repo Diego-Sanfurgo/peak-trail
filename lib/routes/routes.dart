@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:peak_trail/tracking/tracking_database.dart';
+import 'package:peak_trail/persistence/tracking/tracking_database.dart';
 import 'package:peak_trail/utils/constant_and_variables.dart';
 import '../views/location_debug_test.dart';
 import 'route_widgets_export.dart';

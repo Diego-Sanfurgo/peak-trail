@@ -27,7 +27,7 @@ Future<void> addStyles(MapboxMap controller) async {
 
     await Future.delayed(const Duration(milliseconds: 500));
     controller.style.addStyleImage(
-      AppConstants.mountainMarkerId,
+      MapConstants.mountainMarkerId,
       1,
       MbxImage(
         width: 24,

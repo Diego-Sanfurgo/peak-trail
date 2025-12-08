@@ -10,7 +10,7 @@ import 'package:peak_trail/views/home/functions/add_styles.dart';
 Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
   await controller.style.addSource(
     GeoJsonSource(
-      id: AppConstants.mountainsSourceId,
+      id: MapConstants.mountainsSourceId,
       data: geoJson,
       cluster: true,
       clusterMaxZoom: 16,
@@ -22,8 +22,8 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
   //Cluster layer
   await controller.style.addLayer(
     CircleLayer(
-      id: AppConstants.clusterLayerId,
-      sourceId: AppConstants.mountainsSourceId,
+      id: MapConstants.clusterLayerId,
+      sourceId: MapConstants.mountainsSourceId,
       circleColor: Colors.grey.toARGB32(),
       circleRadius: 20,
       filter: ["has", "point_count"],
@@ -36,8 +36,8 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
   // 🔢 Texto con el número de puntos
   await controller.style.addLayer(
     SymbolLayer(
-      id: AppConstants.clusterCountId,
-      sourceId: AppConstants.mountainsSourceId,
+      id: MapConstants.clusterCountId,
+      sourceId: MapConstants.mountainsSourceId,
       filter: ["has", "point_count"],
       textFieldExpression: ["get", "point_count"],
       textColor: Colors.white.toARGB32(),
@@ -48,20 +48,20 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
   );
 
   await addStyles(controller);
-  if (!await controller.style.hasStyleImage(AppConstants.mountainMarkerId)) {
+  if (!await controller.style.hasStyleImage(MapConstants.mountainMarkerId)) {
     await addStyles(controller);
   }
 
   // Puntos individuales
   await controller.style.addLayer(
     SymbolLayer(
-      id: AppConstants.singlePointId,
-      sourceId: AppConstants.mountainsSourceId,
+      id: MapConstants.singlePointId,
+      sourceId: MapConstants.mountainsSourceId,
       filter: [
         "!",
         ["has", "point_count"],
       ],
-      iconImage: AppConstants.mountainMarkerId,
+      iconImage: MapConstants.mountainMarkerId,
       iconSizeExpression: [
         "case",
         [
@@ -112,7 +112,7 @@ Future<void> addMountainsLayers(MapboxMap controller, String geoJson) async {
 
   // La capa de puntos individuales debe ir POR ENCIMA de los clusters
   await controller.style.moveStyleLayer(
-    AppConstants.singlePointId,
+    MapConstants.singlePointId,
     LayerPosition(above: "cluster-count"),
   );
 
@@ -125,7 +125,7 @@ Future<void> _addOnTapListener(MapboxMap controller) async {
         .queryRenderedFeatures(
           RenderedQueryGeometry.fromScreenCoordinate(mapContext.touchPosition),
           RenderedQueryOptions(
-            layerIds: [AppConstants.clusterLayerId, AppConstants.singlePointId],
+            layerIds: [MapConstants.clusterLayerId, MapConstants.singlePointId],
             filter: null,
           ),
         );
@@ -134,7 +134,7 @@ Future<void> _addOnTapListener(MapboxMap controller) async {
 
     final QueriedRenderedFeature? feature = features.first;
     final rawFeature = feature!.queriedFeature.feature;
-    if (feature.layers.contains(AppConstants.singlePointId)) {
+    if (feature.layers.contains(MapConstants.singlePointId)) {
       final Mountain mountain = Mountain.fromFeature(rawFeature);
 
       // Des-seleccionar anterior
@@ -148,7 +148,7 @@ Future<void> _addOnTapListener(MapboxMap controller) async {
 
       // Seleccionar nuevo
       await controller.setFeatureState(
-        AppConstants.mountainsSourceId,
+        MapConstants.mountainsSourceId,
         null,
         mountain.id,
         jsonEncode({"selected": true}),
@@ -162,7 +162,7 @@ Future<void> _addOnTapListener(MapboxMap controller) async {
         MapAnimationOptions(duration: 500),
       );
     }
-    if (feature.layers.contains(AppConstants.clusterLayerId)) {
+    if (feature.layers.contains(MapConstants.clusterLayerId)) {
       final ClusterFeature clusterFeature = ClusterFeature.fromFeature(
         rawFeature,
       );
@@ -170,7 +170,7 @@ Future<void> _addOnTapListener(MapboxMap controller) async {
       // Calcular el nuevo zoom ideal para expandir este clúster
       final FeatureExtensionValue zoom = await controller
           .getGeoJsonClusterExpansionZoom(
-            AppConstants.mountainsSourceId,
+            MapConstants.mountainsSourceId,
             clusterFeature.toJson(),
           );
 

@@ -6,6 +6,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:peak_trail/controllers/location_service.dart';
+import 'package:peak_trail/persistence/tracking/tracking_database.dart';
+import 'package:peak_trail/utils/constant_and_variables.dart';
+import 'package:peak_trail/views/home/functions/add_tracking_polilyne.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -27,6 +30,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapCameraChanged>(_onCameraChanged);
     on<MapStyleLoaded>(_onStyleLoaded);
     on<MapCameraToMe>(_onCameraToMe);
+    on<MapStartTracking>(_onStartTracking);
   }
 
   MapboxMap? _controller;
@@ -106,6 +110,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     emit(MapStatus(isLoading: false, mountains: []));
     add(MapCameraToMe());
+
     // emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
   }
 
@@ -143,6 +148,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     MapStyleLoaded event,
     Emitter<MapState> emit,
   ) async {}
+
+  Future<void> _onStartTracking(
+    MapStartTracking event,
+    Emitter<MapState> emit,
+  ) async {
+    if (_controller == null) return;
+
+    final TrackingDatabase database = TrackingDatabase();
+
+    geo.Position? position = _locationService.lastPosition;
+    if (position == null) return;
+
+    await addTrackingPolilyne(_controller!, position);
+
+    // await actualizarRutaEnMapa(await database.getAllPoints(), _controller);
+  }
 }
 
 // Future<void> _locationTracking() async {
@@ -159,3 +180,30 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 //       .getAllTraces(); // ordenadas por id/timestamp
 //   // muestra en mapa (e.g. flutter_map o google_maps_flutter)
 // }
+
+Future<void> ajustarCamaraATodaLaRuta(
+  List<TrackingPoint> puntosBackend,
+  MapboxMap? controller,
+) async {
+  if (controller == null || puntosBackend.isEmpty) return;
+
+  List<Point> coordenadas = puntosBackend
+      .map((p) => Point(coordinates: Position(p.longitude, p.latitude)))
+      .toList();
+
+  // 1. Crear las opciones de cámara basándose en las coordenadas
+  // Mapbox tiene un método nativo para calcular esto sin que hagas matemáticas manuales
+  CameraOptions cameraOptions = await controller.cameraForCoordinatesPadding(
+    coordenadas,
+    CameraOptions(),
+    MbxEdgeInsets(top: 50.0, left: 50.0, bottom: 50.0, right: 50.0), // Padding
+    null,
+    null,
+  );
+
+  // 2. Mover la cámara suavemente
+  await controller.flyTo(
+    cameraOptions,
+    MapAnimationOptions(duration: 1000), // 1 segundo de animación
+  );
+}
