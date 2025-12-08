@@ -46,6 +46,13 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>Pathfinder needs to track you location to offer you great features</string>
+	<string>Necesitamos tu ubicación para grabar la ruta.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Necesitamos tu ubicación siempre para grabar la ruta con la pantalla apagada.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+	    <string>location</string>
+	    <string>fetch</string> 
+	</array>
 </dict>
 </plist>

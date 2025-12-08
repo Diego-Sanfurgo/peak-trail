@@ -1,3 +1,5 @@
+package com.example.peak_trail
+
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey

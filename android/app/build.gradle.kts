@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -42,4 +43,25 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // ... Tus dependencias existentes ...
+    
+    // --- DECLARACIÓN DE VARIABLES EN KOTLIN DSL ---
+    val room_version = "2.6.1" 
+    
+    // --- DEPENDENCIAS DE UBICACIÓN (LocationService.kt) ---
+    // En Kotlin DSL, las strings simples requieren comillas dobles, y la llamada es un método.
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // --- DEPENDENCIAS DE ROOM (Persistencia) ---
+    // Core de Room
+    implementation("androidx.room:room-runtime:$room_version")
+    
+    // Generador de código (kapt en Groovy se convierte en una llamada de método)
+    kapt("androidx.room:room-compiler:$room_version")
+    
+    // Extensiones de Kotlin para Room
+    implementation("androidx.room:room-ktx:$room_version")
 }
