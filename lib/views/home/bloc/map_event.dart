@@ -34,10 +34,14 @@ class MapStyleLoaded extends MapEvent {
 class MapCameraToMe extends MapEvent {
   @override
   List<Object?> get props => [];
-  
 }
 
 class MapStartTracking extends MapEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class MapNavigateToSearch extends MapEvent {
   @override
   List<Object?> get props => [];
 }

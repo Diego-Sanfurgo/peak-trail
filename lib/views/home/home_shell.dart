@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:peak_trail/controllers/navigation_controller.dart';
 
 import 'bloc/map_bloc.dart';
@@ -17,8 +18,9 @@ class _HomeShellViewState extends State<HomeShellView> {
 
   @override
   Widget build(BuildContext context) {
+    final GoRouterState routerState = GoRouterState.of(context);
     return BlocProvider(
-      create: (context) => MapBloc(),
+      create: (context) => MapBloc(routerState),
       child: Scaffold(
         body: widget.child,
         bottomNavigationBar: BottomNavigationBar(

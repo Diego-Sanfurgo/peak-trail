@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:geolocator/geolocator.dart' as geo;
@@ -34,6 +36,26 @@ Future<void> addTrackingPolilyne(
       lineJoin: LineJoin.ROUND,
     ),
   ]);
+
+  Stream.periodic(
+    const Duration(seconds: 2),
+  ).asyncMap((_) => TrackingDatabase().getAllPoints()).listen((points) {
+    List<Position> coordinates = points
+        .map((p) => Position(p.longitude, p.latitude))
+        .toList();
+
+    log("Updating polyline with ${coordinates.length} points");
+
+    polylineManager.deleteAll();
+    polylineManager.createMulti([
+      PolylineAnnotationOptions(
+        geometry: LineString(coordinates: coordinates),
+        lineColor: Colors.orange.toARGB32(),
+        lineWidth: 5.0,
+        lineJoin: LineJoin.ROUND,
+      ),
+    ]);
+  });
 
   // await controller.style.addSource(source);
 

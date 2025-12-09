@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:peak_trail/routes/routes.dart';
+import 'package:peak_trail/theme/theme.dart';
 
 import 'controllers/location_service.dart';
 import 'utils/constant_and_variables.dart';
@@ -21,6 +22,7 @@ class App extends StatelessWidget {
       color: Colors.green,
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: AppUtil.scaffoldKey,
+      theme: AppTheme.lightTheme,
     );
   }
 }

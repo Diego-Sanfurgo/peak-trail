@@ -5,10 +5,11 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:go_router/go_router.dart';
 import 'package:peak_trail/controllers/location_service.dart';
+import 'package:peak_trail/controllers/navigation_controller.dart';
 import 'package:peak_trail/persistence/tracking/tracking_database.dart';
-import 'package:peak_trail/utils/constant_and_variables.dart';
-import 'package:peak_trail/views/home/functions/add_tracking_polilyne.dart';
+import 'package:peak_trail/views/home/functions/add_tracking_polyline.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -23,7 +24,7 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapBloc() : super(MapStatus(isLoading: true)) {
+  MapBloc(this._routerState) : super(MapStatus(isLoading: true)) {
     _init();
     on<MapCreated>(_onCreated);
     on<MapReload>(_onReload);
@@ -31,11 +32,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapStyleLoaded>(_onStyleLoaded);
     on<MapCameraToMe>(_onCameraToMe);
     on<MapStartTracking>(_onStartTracking);
+    on<MapNavigateToSearch>(_onNavigateToSearch);
   }
 
   MapboxMap? _controller;
   final MountainsRepository _mountainsRepository = MountainsRepository();
   final LocationService _locationService = LocationService.instance;
+  final GoRouterState _routerState;
 
   Future<void> _init() async {
     MapboxOptions.setAccessToken(Environment.mapboxToken);
@@ -155,7 +158,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     if (_controller == null) return;
 
-    final TrackingDatabase database = TrackingDatabase();
+    // final TrackingDatabase database = TrackingDatabase();
 
     geo.Position? position = _locationService.lastPosition;
     if (position == null) return;
@@ -163,6 +166,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     await addTrackingPolilyne(_controller!, position);
 
     // await actualizarRutaEnMapa(await database.getAllPoints(), _controller);
+  }
+
+  Future<void> _onNavigateToSearch(
+    MapNavigateToSearch event,
+    Emitter<MapState> emit,
+  ) async {
+    NavigationController.go(Routes.SEARCH, actualUri: _routerState.uri);
   }
 }
 

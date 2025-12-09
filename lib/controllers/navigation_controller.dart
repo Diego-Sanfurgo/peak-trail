@@ -5,6 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../utils/constant_and_variables.dart';
 
 class NavigationController {
+  static void pop() {
+    AppUtil.navigatorContext.pop();
+  }
+
   static void go(
     Routes route, {
     dynamic extra,
@@ -23,7 +27,7 @@ class NavigationController {
   }
 }
 
-enum Routes { HOME, MAP, PROFILE }
+enum Routes { HOME, MAP, PROFILE, SEARCH }
 
 String _getPath(Routes route, {String? parameter}) {
   switch (route) {
@@ -33,5 +37,7 @@ String _getPath(Routes route, {String? parameter}) {
       return '/map';
     case Routes.PROFILE:
       return '/profile';
+    case Routes.SEARCH:
+      return '/search';
   }
 }

@@ -4,8 +4,9 @@ class AppTheme {
   AppTheme._();
 
   static final ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.light,
-    primarySwatch: Colors.green,
+    primarySwatch: Colors.lightGreen,
     scaffoldBackgroundColor: Colors.white,
     colorScheme: _colorSchemeLight,
     appBarTheme: const AppBarTheme(
@@ -13,18 +14,8 @@ class AppTheme {
       // foregroundColor: Colors.white,
     ),
     textTheme: const TextTheme(),
+    searchBarTheme: _searchBarThemeData,
   );
-
-  // static final ThemeData darkTheme = ThemeData(
-  //   brightness: Brightness.dark,
-  //   primarySwatch: Colors.blue,
-  //   scaffoldBackgroundColor: Colors.black,
-  //   appBarTheme: const AppBarTheme(
-  //     backgroundColor: Colors.black,
-  //     foregroundColor: Colors.white,
-  //   ),
-  //   textTheme: const TextTheme(),
-  // );
 }
 
 ColorScheme _colorSchemeLight = const ColorScheme.light(
@@ -37,4 +28,16 @@ ColorScheme _colorSchemeLight = const ColorScheme.light(
   onError: Colors.white,
   surface: Colors.white,
   onSurface: Colors.black,
+);
+
+SearchBarThemeData _searchBarThemeData = SearchBarThemeData(
+  elevation: WidgetStatePropertyAll(0),
+  shape: WidgetStatePropertyAll(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(50),
+      side: BorderSide(color: Colors.green),
+    ),
+  ),
+  backgroundColor: WidgetStatePropertyAll(Colors.white),
+  hintStyle: WidgetStatePropertyAll(TextStyle(color: Colors.grey[600])),
 );

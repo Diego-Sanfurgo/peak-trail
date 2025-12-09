@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
+
 import 'package:go_router/go_router.dart';
-import 'package:peak_trail/persistence/tracking/tracking_database.dart';
+
 import 'package:peak_trail/utils/constant_and_variables.dart';
-import '../views/location_debug_test.dart';
+import 'package:peak_trail/persistence/tracking/tracking_database.dart';
+
 import 'route_widgets_export.dart';
 
 class AppRouter {
@@ -12,13 +14,23 @@ class AppRouter {
     initialLocation: "/map",
     observers: [],
     routes: [
+      GoRoute(path: "/", redirect: (context, state) => '/map'),
       ShellRoute(
         navigatorKey: GlobalKey<NavigatorState>(),
         builder: (context, state, child) {
           return HomeShellView(child: child);
         },
         routes: [
-          GoRoute(path: "/map", builder: (context, state) => const MapView()),
+          GoRoute(
+            path: "/map",
+            builder: (context, state) => const MapView(),
+            routes: [
+              GoRoute(
+                path: '/search',
+                builder: (context, state) => const SearchView(),
+              ),
+            ],
+          ),
           GoRoute(
             path: "/profile",
             // builder: (context, state) => const ProfileView(),
@@ -27,7 +39,6 @@ class AppRouter {
           ),
         ],
       ),
-      GoRoute(path: "/", redirect: (context, state) => '/map'),
     ],
   );
 }

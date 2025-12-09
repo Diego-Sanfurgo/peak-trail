@@ -9,7 +9,7 @@ class MountainsRepository {
   final MountainsProvider _provider = MountainsProvider();
   Set<Mountain> mountains = {};
 
-  Future<Set<Mountain>> getMountains() async {
+  Future<Set<Mountain>> getPeaks() async {
     if (mountains.isNotEmpty) return mountains;
 
     mountains = await _provider.fetchMountains();

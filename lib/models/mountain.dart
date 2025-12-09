@@ -113,6 +113,9 @@ class Coordinates {
   };
 
   @override
+  String toString() => 'Lat: $lat, Lng: $lng';
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Coordinates && other.lat == lat && other.lng == lng);
@@ -147,7 +150,7 @@ class Properties {
   // final int entidad;
   // final String? fna;
   // final String? gna;
-  final String? name;
+  final String name;
   final double? alt;
   // final String? fdc;
   // final String? sag;

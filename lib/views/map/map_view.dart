@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:peak_trail/views/map/widgets/mocked_search_bar.dart';
 
 import '../home/bloc/map_bloc.dart';
 
@@ -95,19 +96,10 @@ class _BodyState extends State<_Body> {
           top: 16,
           left: 16,
           right: 16,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: TextFormField(
-              decoration: InputDecoration(
-                suffixIcon: Icon(Icons.search_rounded),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-            ),
+          child: GestureDetector(
+            onTap: () =>
+                BlocProvider.of<MapBloc>(context).add(MapNavigateToSearch()),
+            child: MockedSearchBar(),
           ),
         ),
       ],
