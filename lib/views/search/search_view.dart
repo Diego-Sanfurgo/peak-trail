@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:peak_trail/controllers/navigation_controller.dart';
 import 'package:peak_trail/models/mountain.dart';
+import 'package:peak_trail/views/home/bloc/map_bloc.dart';
 
 import 'cubit/search_bar_cubit.dart';
 
@@ -51,7 +53,8 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
               child: SearchBar(
                 leading: BackButton(
                   onPressed: () => NavigationController.pop(),
-                ),autoFocus: true,
+                ),
+                autoFocus: true,
                 controller: _controller,
                 onChanged: (value) {
                   value.trim();
@@ -74,6 +77,17 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
                               .coordinates
                               .toString(),
                         ),
+                        onTap: () {
+                          NavigationController.pop();
+                          BlocProvider.of<MapBloc>(context).add(
+                            MapMoveCamera(
+                              targetLocation: LatLng(
+                                mountain.coordinates.lat,
+                                mountain.coordinates.lng,
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

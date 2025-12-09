@@ -1,42 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:peak_trail/controllers/navigation_controller.dart';
-
 import 'bloc/map_bloc.dart';
 
-class HomeShellView extends StatefulWidget {
-  const HomeShellView({super.key, required this.child});
-  final Widget child;
+class HomeShellView extends StatelessWidget {
+  const HomeShellView({super.key, required this.navigationShell});
 
-  @override
-  State<HomeShellView> createState() => _HomeShellViewState();
-}
-
-class _HomeShellViewState extends State<HomeShellView> {
-  int selectedIndex = 0;
+  // Recibimos el shell que controla el estado y el índice
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    final GoRouterState routerState = GoRouterState.of(context);
+    final routerState = GoRouterState.of(context);
+    // Nota: El MapBloc podría necesitar moverse arriba en el árbol (en main.dart)
+    // si necesitas que persista al cambiar de rutas fuera del Shell,
+    // pero aquí está bien si solo vive dentro del Shell.
+
+    // Sin embargo, GoRouterState.of(context) podría dar problemas aquí
+    // ya que el contexto cambia. Intenta evitar pasar routerState al Bloc si es posible,
+    // o asegúrate de que sea estrictamente necesario.
+
+    // Corrección para evitar error de contexto si usas routerState dentro del create:
+    // Es más seguro instanciar el Bloc sin depender tanto del GoRouterState inmediato si es posible.
     return BlocProvider(
-      create: (context) => MapBloc(routerState),
+      create: (context) => MapBloc(routerState.uri),
       child: Scaffold(
-        body: widget.child,
+        // El body es el navigationShell mismo.
+        // GoRouter se encarga de usar un IndexedStack internamente.
+        body: navigationShell,
         bottomNavigationBar: BottomNavigationBar(
-          items: [
+          // Usamos el índice actual del shell
+          currentIndex: navigationShell.currentIndex,
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.map), label: "Mapa"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
           ],
           onTap: (index) {
-            if (index == 0) {
-              selectedIndex = 0;
-              NavigationController.go(Routes.MAP);
-            } else if (index == 1) {
-              selectedIndex = 1;
-              NavigationController.go(Routes.PROFILE);
-            }
-            setState(() {});
+            // Esta función es mágica: cambia de rama sin perder el estado
+            navigationShell.goBranch(
+              index,
+              // Soporte opcional: si tocas el tab activo, vuelve al inicio de esa rama
+              initialLocation: index == navigationShell.currentIndex,
+            );
           },
         ),
       ),

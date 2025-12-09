@@ -31,9 +31,14 @@ class MapStyleLoaded extends MapEvent {
   List<Object?> get props => [];
 }
 
-class MapCameraToMe extends MapEvent {
+class MapMoveCamera extends MapEvent {
+  final double? zoomLevel;
+  final LatLng? targetLocation;
+
+  MapMoveCamera({this.zoomLevel, this.targetLocation});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [zoomLevel, targetLocation];
 }
 
 class MapStartTracking extends MapEvent {

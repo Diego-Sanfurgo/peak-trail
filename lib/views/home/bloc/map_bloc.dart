@@ -5,7 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:peak_trail/controllers/location_service.dart';
 import 'package:peak_trail/controllers/navigation_controller.dart';
 import 'package:peak_trail/persistence/tracking/tracking_database.dart';
@@ -24,13 +24,13 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapBloc(this._routerState) : super(MapStatus(isLoading: true)) {
+  MapBloc(this._actualUri) : super(MapStatus(isLoading: true)) {
     _init();
     on<MapCreated>(_onCreated);
     on<MapReload>(_onReload);
     on<MapCameraChanged>(_onCameraChanged);
     on<MapStyleLoaded>(_onStyleLoaded);
-    on<MapCameraToMe>(_onCameraToMe);
+    on<MapMoveCamera>(_onMoveCamera);
     on<MapStartTracking>(_onStartTracking);
     on<MapNavigateToSearch>(_onNavigateToSearch);
   }
@@ -38,7 +38,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   MapboxMap? _controller;
   final MountainsRepository _mountainsRepository = MountainsRepository();
   final LocationService _locationService = LocationService.instance;
-  final GoRouterState _routerState;
+  final Uri _actualUri;
 
   Future<void> _init() async {
     MapboxOptions.setAccessToken(Environment.mapboxToken);
@@ -112,7 +112,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // _locationTracking();
 
     emit(MapStatus(isLoading: false, mountains: []));
-    add(MapCameraToMe());
+    add(MapMoveCamera());
 
     // emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
   }
@@ -129,19 +129,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     await filterVisiblePoints(_controller!, event.cameraState);
   }
 
-  Future<void> _onCameraToMe(
-    MapCameraToMe event,
+  Future<void> _onMoveCamera(
+    MapMoveCamera event,
     Emitter<MapState> emit,
   ) async {
-    geo.Position? position = _locationService.lastPosition;
-    if (position == null) return;
+    LatLng coords = event.targetLocation == null
+        ? LatLng(
+            _locationService.lastPosition!.latitude,
+            _locationService.lastPosition!.longitude,
+          )
+        : event.targetLocation!;
 
     _controller?.flyTo(
       CameraOptions(
-        zoom: 12,
-        center: Point(
-          coordinates: Position(position.longitude, position.latitude),
-        ),
+        zoom: event.zoomLevel ?? 14.0,
+        center: Point(coordinates: Position(coords.longitude, coords.latitude)),
       ),
       MapAnimationOptions(duration: 500),
     );
@@ -172,7 +174,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     MapNavigateToSearch event,
     Emitter<MapState> emit,
   ) async {
-    NavigationController.go(Routes.SEARCH, actualUri: _routerState.uri);
+    NavigationController.go(Routes.SEARCH, actualUri: _actualUri);
   }
 }
 

@@ -76,7 +76,7 @@ class _BodyState extends State<_Body> {
                 heroTag: Key("location_FAB"),
                 child: Icon(Icons.my_location_rounded),
                 onPressed: () =>
-                    BlocProvider.of<MapBloc>(context).add(MapCameraToMe()),
+                    BlocProvider.of<MapBloc>(context).add(MapMoveCamera()),
               ),
             ],
           ),
