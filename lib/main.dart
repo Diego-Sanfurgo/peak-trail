@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:peak_trail/routes/routes.dart';
-import 'package:peak_trail/theme/theme.dart';
+import 'package:peak_trail/core/router/app_router.dart';
+import 'package:peak_trail/core/theme/theme.dart';
 
-import 'controllers/location_service.dart';
+import 'core/services/location_service.dart';
 import 'utils/constant_and_variables.dart';
 
 void main() async {
