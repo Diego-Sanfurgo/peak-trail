@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:peak_trail/core/services/navigation_service.dart';
 import 'package:peak_trail/data/models/peak.dart';
+import 'package:peak_trail/data/repositories/peaks_repository.dart';
 import 'package:peak_trail/features/home/bloc/map_bloc.dart';
 
 import 'cubit/search_bar_cubit.dart';
@@ -13,7 +14,7 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SearchBarCubit(),
+      create: (context) => SearchBarCubit(context.read<PeaksRepository>()),
       child: _SearchBarWidget(),
     );
   }
@@ -54,10 +55,7 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
                 leading: BackButton(onPressed: () => NavigationService.pop()),
                 autoFocus: true,
                 controller: _controller,
-                onChanged: (value) {
-                  value.trim();
-                  _cubit.queryMountains(value);
-                },
+                onChanged: (value) => _cubit.queryPeaks(value),
               ),
             ),
             BlocBuilder<SearchBarCubit, SearchBarState>(

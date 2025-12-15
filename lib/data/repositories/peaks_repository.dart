@@ -16,7 +16,7 @@ class PeaksRepository {
     return mountains;
   }
 
-  Future<String> getGeoJsonMountains() async {
+  Future<String> getPeaksJson() async {
     return await _provider.fetchGeojsonPeaks();
   }
 }

@@ -1,4 +1,6 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:peak_trail/data/repositories/peaks_repository.dart';
 import 'package:peak_trail/utils/constant_and_variables.dart';
 import 'package:peak_trail/persistence/tracking/tracking_database.dart';
 import 'route_widgets_export.dart';
@@ -29,7 +31,10 @@ class AppRouter {
                 routes: [
                   GoRoute(
                     path: '/search',
-                    builder: (context, state) => const SearchView(),
+                    builder: (context, state) => RepositoryProvider(
+                      create: (context) => PeaksRepository(),
+                      child: const SearchView(),
+                    ),
                   ),
                 ],
               ),

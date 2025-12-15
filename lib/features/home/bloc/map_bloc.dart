@@ -2,21 +2,23 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart' as geo;
+import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:peak_trail/core/services/location_service.dart';
-import 'package:peak_trail/core/services/navigation_service.dart';
-import 'package:peak_trail/persistence/tracking/tracking_database.dart';
-import 'package:peak_trail/features/home/functions/add_tracking_polyline.dart';
+import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:peak_trail/core/environment/env.dart';
+import 'package:peak_trail/core/services/location_service.dart';
+import 'package:peak_trail/core/services/navigation_service.dart';
+
 import 'package:peak_trail/data/models/peak.dart';
 import 'package:peak_trail/data/repositories/peaks_repository.dart';
+import 'package:peak_trail/persistence/tracking/tracking_database.dart';
+
 import 'package:peak_trail/features/home/functions/add_mountains.dart';
+import 'package:peak_trail/features/home/functions/add_tracking_polyline.dart';
 
 import '../functions/filter_visible_points.dart';
 
@@ -55,14 +57,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _controller = event.controller;
 
     _controller!.location.updateSettings(
-      LocationComponentSettings(
-        enabled: true,
-        pulsingEnabled: true,
-        puckBearingEnabled: true,
-        showAccuracyRing: true,
-        pulsingMaxRadius: 50,
-        pulsingColor: Colors.green.toARGB32(),
-      ),
+      LocationComponentSettings(enabled: true, puckBearingEnabled: true),
     );
 
     // PointAnnotationManager pointAnnotationManager = await _controller
@@ -104,7 +99,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     await addMountainsLayers(
       _controller!,
-      await _mountainsRepository.getGeoJsonMountains(),
+      await _mountainsRepository.getPeaksJson(),
     );
 
     // setupPositionTracking(_controller!);

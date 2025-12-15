@@ -114,8 +114,7 @@ class _MapboxWidget extends StatefulWidget {
   State<_MapboxWidget> createState() => _MapboxWidgetState();
 }
 
-class _MapboxWidgetState extends State<_MapboxWidget>
-    with AutomaticKeepAliveClientMixin {
+class _MapboxWidgetState extends State<_MapboxWidget> {
   MapboxMap? mapController;
   late final MapBloc bloc;
   // Timer? idleTimer;
@@ -133,12 +132,7 @@ class _MapboxWidgetState extends State<_MapboxWidget>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return BlocBuilder<MapBloc, MapState>(
       builder: (context, state) {
         state as MapStatus;
