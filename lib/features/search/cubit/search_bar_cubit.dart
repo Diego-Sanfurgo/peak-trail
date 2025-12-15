@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:peak_trail/data/models/mountain.dart';
-import 'package:peak_trail/data/repositories/mountains_repository.dart';
+import 'package:peak_trail/data/models/peak.dart';
+import 'package:peak_trail/data/repositories/peaks_repository.dart';
 
 part 'search_bar_state.dart';
 
@@ -10,8 +10,8 @@ class SearchBarCubit extends Cubit<SearchBarState> {
     _init();
   }
 
-  final MountainsRepository _mountainsRepository = MountainsRepository();
-  final Set<Mountain> _allPeaks = {};
+  final PeaksRepository _mountainsRepository = PeaksRepository();
+  final Set<Peak> _allPeaks = {};
 
   Future<void> _init() async {
     _allPeaks.addAll(await _mountainsRepository.getPeaks());
@@ -25,7 +25,7 @@ class SearchBarCubit extends Cubit<SearchBarState> {
 
     emit(SearchBarStatus(isLoading: true));
 
-    final List<Mountain> filteredMountains = _allPeaks.where((mountain) {
+    final List<Peak> filteredMountains = _allPeaks.where((mountain) {
       final String name = mountain.properties.name;
       return name.toLowerCase().contains(query.toLowerCase());
     }).toList();

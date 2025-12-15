@@ -14,8 +14,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:peak_trail/core/environment/env.dart';
-import 'package:peak_trail/data/models/mountain.dart';
-import 'package:peak_trail/data/repositories/mountains_repository.dart';
+import 'package:peak_trail/data/models/peak.dart';
+import 'package:peak_trail/data/repositories/peaks_repository.dart';
 import 'package:peak_trail/features/home/functions/add_mountains.dart';
 
 import '../functions/filter_visible_points.dart';
@@ -36,7 +36,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   MapboxMap? _controller;
-  final MountainsRepository _mountainsRepository = MountainsRepository();
+  final PeaksRepository _mountainsRepository = PeaksRepository();
   final LocationService _locationService = LocationService.instance;
   final Uri _actualUri;
 

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:peak_trail/data/models/cluster_feature.dart';
-import 'package:peak_trail/data/models/mountain.dart';
+import 'package:peak_trail/data/models/peak.dart';
 import 'package:peak_trail/utils/constant_and_variables.dart';
 import 'package:peak_trail/features/home/functions/add_styles.dart';
 
@@ -135,7 +135,7 @@ Future<void> _addOnTapListener(MapboxMap controller) async {
     final QueriedRenderedFeature? feature = features.first;
     final rawFeature = feature!.queriedFeature.feature;
     if (feature.layers.contains(MapConstants.singlePointId)) {
-      final Mountain mountain = Mountain.fromFeature(rawFeature);
+      final Peak mountain = Peak.fromFeature(rawFeature);
 
       // Des-seleccionar anterior
       // if (_selectedFeatureId != null) {

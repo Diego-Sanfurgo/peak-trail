@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:peak_trail/core/services/navigation_service.dart';
-import 'package:peak_trail/data/models/mountain.dart';
+import 'package:peak_trail/data/models/peak.dart';
 import 'package:peak_trail/features/home/bloc/map_bloc.dart';
 
 import 'cubit/search_bar_cubit.dart';
@@ -66,7 +66,7 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
                   child: ListView.builder(
                     itemCount: state.mountains.length,
                     itemBuilder: (context, index) {
-                      Mountain mountain = state.mountains[index];
+                      Peak mountain = state.mountains[index];
                       return ListTile(
                         title: Text(mountain.properties.name),
                         subtitle: Text(

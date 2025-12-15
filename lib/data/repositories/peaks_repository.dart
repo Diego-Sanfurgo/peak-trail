@@ -1,15 +1,15 @@
-import 'package:peak_trail/data/models/mountain.dart';
+import 'package:peak_trail/data/models/peak.dart';
 import 'package:peak_trail/data/providers/peak_provider.dart';
 
-class MountainsRepository {
-  factory MountainsRepository() => _instance;
-  MountainsRepository._internal();
-  static final MountainsRepository _instance = MountainsRepository._internal();
+class PeaksRepository {
+  factory PeaksRepository() => _instance;
+  PeaksRepository._internal();
+  static final PeaksRepository _instance = PeaksRepository._internal();
 
   final PeakProvider _provider = PeakProvider();
-  Set<Mountain> mountains = {};
+  Set<Peak> mountains = {};
 
-  Future<Set<Mountain>> getPeaks() async {
+  Future<Set<Peak>> getPeaks() async {
     if (mountains.isNotEmpty) return mountains;
 
     mountains = await _provider.fetchPeaks() ?? {};

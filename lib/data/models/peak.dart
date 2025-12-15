@@ -6,12 +6,12 @@ import 'dart:convert';
 
 import 'package:peak_trail/utils/normalize_map.dart';
 
-Mountain mountainFromJson(String str) => Mountain.fromJson(json.decode(str));
+Peak mountainFromJson(String str) => Peak.fromJson(json.decode(str));
 
-String mountainToJson(Mountain data) => json.encode(data.toJson());
+String mountainToJson(Peak data) => json.encode(data.toJson());
 
-class Mountain {
-  Mountain({
+class Peak {
+  Peak({
     // required this.type,
     required this.id,
     required this.coordinates,
@@ -20,7 +20,7 @@ class Mountain {
     // required this.bbox,
   });
 
-  factory Mountain.fromJson(Map<String, dynamic> json) => Mountain(
+  factory Peak.fromJson(Map<String, dynamic> json) => Peak(
     // type: json["type"],
     id: json["properties"]["id"],
     coordinates: Coordinates.fromJson(json["geometry"]),
@@ -29,9 +29,9 @@ class Mountain {
     // bbox: List<double>.from(json["bbox"].map((x) => x?.toDouble())),
   );
 
-  factory Mountain.fromFeature(Map<String?, Object?> rawFeature) {
+  factory Peak.fromFeature(Map<String?, Object?> rawFeature) {
     final Map<String, dynamic> json = normalizeMap(rawFeature);
-    return Mountain.fromJson(json);
+    return Peak.fromJson(json);
   }
   // final String type;
   final String id;
@@ -40,14 +40,14 @@ class Mountain {
   final Properties properties;
   // final List<double>? bbox;
 
-  Mountain copyWith({
+  Peak copyWith({
     // String? type,
     String? id,
     Coordinates? coordinates,
     // String? geometryName,
     Properties? properties,
     // List<double>? bbox,
-  }) => Mountain(
+  }) => Peak(
     // type: type ?? this.type,
     id: id ?? this.id,
     coordinates: coordinates ?? this.coordinates,
@@ -67,7 +67,7 @@ class Mountain {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || (other is Mountain && other.id == id);
+      identical(this, other) || (other is Peak && other.id == id);
 
   @override
   int get hashCode => id.hashCode;

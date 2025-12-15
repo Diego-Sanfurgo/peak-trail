@@ -3,7 +3,7 @@ part of 'search_bar_cubit.dart';
 sealed class SearchBarState extends Equatable {
   const SearchBarState({this.isLoading = false, this.mountains = const []});
   final bool isLoading;
-  final List<Mountain> mountains;
+  final List<Peak> mountains;
 
   @override
   List<Object> get props => [isLoading, mountains];

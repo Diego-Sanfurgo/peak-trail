@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
-import 'package:peak_trail/data/models/mountain.dart';
+import 'package:peak_trail/data/models/peak.dart';
 
 class PeakProvider {
   factory PeakProvider() => _instance;
@@ -11,7 +11,7 @@ class PeakProvider {
 
   final String _geoJsonPath = 'assets/data/cerros_v3.geojson';
 
-  Future<Set<Mountain>?> fetchPeaks() async {
+  Future<Set<Peak>?> fetchPeaks() async {
     try {
       final String jsonString = await rootBundle.loadString(_geoJsonPath);
       final Map<String, dynamic> geojson = json.decode(jsonString);
@@ -19,7 +19,7 @@ class PeakProvider {
       final List<Map> data = rawData.map((e) => e as Map).toList();
 
       return data
-          .map((e) => Mountain.fromJson(e as Map<String, dynamic>))
+          .map((e) => Peak.fromJson(e as Map<String, dynamic>))
           .toSet();
     } on Exception catch (e) {
       log(e.toString());
