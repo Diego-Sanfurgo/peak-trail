@@ -6,18 +6,19 @@ import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:peak_trail/core/utils/constant_and_variables.dart';
+import 'package:peak_trail/data/repositories/map_repository.dart';
+import 'package:peak_trail/features/home/functions/add_source_and_layers.dart';
+import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-import 'package:peak_trail/core/environment/env.dart';
 import 'package:peak_trail/core/services/location_service.dart';
 import 'package:peak_trail/core/services/navigation_service.dart';
 
 import 'package:peak_trail/data/models/peak.dart';
-import 'package:peak_trail/data/repositories/peaks_repository.dart';
 import 'package:peak_trail/persistence/tracking/tracking_database.dart';
 
-import 'package:peak_trail/features/home/functions/add_mountains.dart';
 import 'package:peak_trail/features/home/functions/add_tracking_polyline.dart';
 
 import '../functions/filter_visible_points.dart';
@@ -26,7 +27,10 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapBloc(this._actualUri) : super(MapStatus(isLoading: true)) {
+  MapBloc({required Uri actualUri, required MapRepository mapRepository})
+    : _mapRepo = mapRepository,
+      _actualUri = actualUri,
+      super(MapStatus(isLoading: true)) {
     _init();
     on<MapCreated>(_onCreated);
     on<MapReload>(_onReload);
@@ -37,13 +41,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapNavigateToSearch>(_onNavigateToSearch);
   }
 
-  MapboxMap? _controller;
-  final PeaksRepository _mountainsRepository = PeaksRepository();
-  final LocationService _locationService = LocationService.instance;
   final Uri _actualUri;
+  MapboxMap? _controller;
+  final MapRepository _mapRepo;
+  final LocationService _locationService = LocationService.instance;
 
   Future<void> _init() async {
-    MapboxOptions.setAccessToken(Environment.mapboxToken);
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.locationAlways,
@@ -97,10 +100,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     //   },
     // );
 
-    await addMountainsLayers(
+    // await addMountainsLayers(_controller!, await _mapRepo.getPeaksJson());
+    await addSourceAndLayers(
       _controller!,
-      await _mountainsRepository.getPeaksJson(),
+      await _mapRepo.getWaterfallJson(),
+      MapConstants.waterfallID,
     );
+    await addSourceAndLayers(
+      _controller!,
+      await _mapRepo.getPeaksJson(),
+      MapConstants.peakID,
+    );
+
+    await addOnMapTapListener(_controller!, [
+      MapConstants.peakID,
+      MapConstants.waterfallID,
+    ]);
 
     // setupPositionTracking(_controller!);
 

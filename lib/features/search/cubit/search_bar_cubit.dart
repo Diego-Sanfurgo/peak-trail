@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:peak_trail/data/models/peak.dart';
-import 'package:peak_trail/data/repositories/peaks_repository.dart';
+import 'package:peak_trail/data/repositories/peak_repository.dart';
 
 part 'search_bar_state.dart';
 
@@ -13,7 +13,7 @@ class SearchBarCubit extends Cubit<SearchBarState> {
     _init();
   }
 
-  final PeaksRepository _mountainsRepository;
+  final PeakRepository _mountainsRepository;
   final List<Map<String, dynamic>> _jsonPeaks = [];
 
   Future<void> _init() async {

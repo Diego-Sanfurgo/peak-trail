@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:peak_trail/data/providers/peak_provider.dart';
+import 'package:peak_trail/data/providers/waterfall_provider.dart';
+import 'package:peak_trail/data/repositories/map_repository.dart';
 import 'bloc/map_bloc.dart';
 
 class HomeShellView extends StatelessWidget {
@@ -22,27 +25,36 @@ class HomeShellView extends StatelessWidget {
 
     // Corrección para evitar error de contexto si usas routerState dentro del create:
     // Es más seguro instanciar el Bloc sin depender tanto del GoRouterState inmediato si es posible.
-    return BlocProvider(
-      create: (context) => MapBloc(routerState.uri),
-      child: Scaffold(
-        // El body es el navigationShell mismo.
-        // GoRouter se encarga de usar un IndexedStack internamente.
-        body: navigationShell,
-        bottomNavigationBar: BottomNavigationBar(
-          // Usamos el índice actual del shell
-          currentIndex: navigationShell.currentIndex,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.map), label: "Mapa"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
-          ],
-          onTap: (index) {
-            // Esta función es mágica: cambia de rama sin perder el estado
-            navigationShell.goBranch(
-              index,
-              // Soporte opcional: si tocas el tab activo, vuelve al inicio de esa rama
-              initialLocation: index == navigationShell.currentIndex,
-            );
-          },
+    return RepositoryProvider(
+      create: (context) => MapRepository(PeakProvider(), WaterfallProvider()),
+      child: BlocProvider(
+        create: (context) => MapBloc(
+          actualUri: routerState.uri,
+          mapRepository: context.read<MapRepository>(),
+        ),
+        child: Scaffold(
+          // El body es el navigationShell mismo.
+          // GoRouter se encarga de usar un IndexedStack internamente.
+          body: navigationShell,
+          bottomNavigationBar: BottomNavigationBar(
+            // Usamos el índice actual del shell
+            currentIndex: navigationShell.currentIndex,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.map), label: "Mapa"),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: "Perfil",
+              ),
+            ],
+            onTap: (index) {
+              // Esta función es mágica: cambia de rama sin perder el estado
+              navigationShell.goBranch(
+                index,
+                // Soporte opcional: si tocas el tab activo, vuelve al inicio de esa rama
+                initialLocation: index == navigationShell.currentIndex,
+              );
+            },
+          ),
         ),
       ),
     );

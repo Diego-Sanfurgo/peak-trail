@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:peak_trail/utils/normalize_map.dart';
+import 'package:peak_trail/core/utils/normalize_map.dart';
 
 ClusterFeature clusterFeatureFromJson(String str) =>
     ClusterFeature.fromJson(json.decode(str));

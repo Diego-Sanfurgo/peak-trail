@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:latlong2/latlong.dart';
+
 import 'package:peak_trail/core/services/navigation_service.dart';
 import 'package:peak_trail/data/models/peak.dart';
-import 'package:peak_trail/data/repositories/peaks_repository.dart';
+import 'package:peak_trail/data/providers/peak_provider.dart';
+import 'package:peak_trail/data/repositories/peak_repository.dart';
 import 'package:peak_trail/features/home/bloc/map_bloc.dart';
 
 import 'cubit/search_bar_cubit.dart';
@@ -13,9 +16,12 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SearchBarCubit(context.read<PeaksRepository>()),
-      child: _SearchBarWidget(),
+    return RepositoryProvider(
+      create: (context) => PeakRepository(PeakProvider()),
+      child: BlocProvider(
+        create: (context) => SearchBarCubit(context.read<PeakRepository>()),
+        child: _SearchBarWidget(),
+      ),
     );
   }
 }
@@ -70,6 +76,7 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
                         subtitle: Text(
                           state.mountains
                               .elementAt(index)
+                              .geometry
                               .coordinates
                               .toString(),
                         ),
@@ -78,8 +85,8 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
                           BlocProvider.of<MapBloc>(context).add(
                             MapMoveCamera(
                               targetLocation: LatLng(
-                                mountain.coordinates.lat,
-                                mountain.coordinates.lng,
+                                mountain.geometry.coordinates.latitude,
+                                mountain.geometry.coordinates.longitude,
                               ),
                             ),
                           );

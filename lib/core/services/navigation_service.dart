@@ -2,7 +2,7 @@
 
 import 'package:go_router/go_router.dart';
 
-import '../../utils/constant_and_variables.dart';
+import '../utils/constant_and_variables.dart';
 
 class NavigationService {
   static void pop() {
