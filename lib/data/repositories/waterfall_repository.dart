@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:peak_trail/data/models/waterfall.dart';
@@ -10,16 +9,7 @@ class WaterfallRepository {
 
   Future<Set<Waterfall>> getWaterfalls() async {
     try {
-      final String? response = await _provider.fetchWaterfall();
-      if (response == null) {
-        throw Exception('Null response');
-      }
-
-      final List features = jsonDecode(response)['features'] as List;
-      final List<Map> data = features.map((e) => e as Map).toList();
-      return data
-          .map((e) => Waterfall.fromJson(e as Map<String, dynamic>))
-          .toSet();
+      return await _provider.fetchWaterfall();
     } on Exception catch (e) {
       log(e.toString());
       return {};
@@ -28,11 +18,7 @@ class WaterfallRepository {
 
   Future<String> getWaterfallJson() async {
     try {
-      String? response = await _provider.fetchWaterfall();
-      if (response == null) {
-        throw Exception('Null response');
-      }
-      return response;
+      return await _provider.fetchWaterfallJson();
     } on Exception catch (e) {
       log(e.toString());
       return '';

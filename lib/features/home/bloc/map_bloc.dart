@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -6,45 +7,41 @@ import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:peak_trail/core/utils/constant_and_variables.dart';
-import 'package:peak_trail/data/repositories/map_repository.dart';
-import 'package:peak_trail/features/home/functions/add_source_and_layers.dart';
-import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
+import 'package:peak_trail/core/services/layer_service.dart';
+import 'package:peak_trail/features/home/dto/selected_feature_dto.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:peak_trail/core/services/location_service.dart';
-import 'package:peak_trail/core/services/navigation_service.dart';
+import 'package:peak_trail/core/utils/constant_and_variables.dart';
 
 import 'package:peak_trail/data/models/peak.dart';
-import 'package:peak_trail/persistence/tracking/tracking_database.dart';
+import 'package:peak_trail/data/repositories/map_repository.dart';
 
+import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
 import 'package:peak_trail/features/home/functions/add_tracking_polyline.dart';
 
-import '../functions/filter_visible_points.dart';
+import 'package:peak_trail/persistence/tracking/tracking_database.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapBloc({required Uri actualUri, required MapRepository mapRepository})
+  MapBloc({required MapRepository mapRepository})
     : _mapRepo = mapRepository,
-      _actualUri = actualUri,
       super(MapStatus(isLoading: true)) {
     _init();
     on<MapCreated>(_onCreated);
     on<MapReload>(_onReload);
-    on<MapCameraChanged>(_onCameraChanged);
-    on<MapStyleLoaded>(_onStyleLoaded);
+    on<MapCameraIdle>(_onCameraIdle);
     on<MapMoveCamera>(_onMoveCamera);
     on<MapStartTracking>(_onStartTracking);
-    on<MapNavigateToSearch>(_onNavigateToSearch);
   }
 
-  final Uri _actualUri;
   MapboxMap? _controller;
   final MapRepository _mapRepo;
   final LocationService _locationService = LocationService.instance;
+  SelectedFeatureDTO _selectedFeatureDTO = SelectedFeatureDTO.empty();
 
   Future<void> _init() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -63,80 +60,73 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(enabled: true, puckBearingEnabled: true),
     );
 
-    // PointAnnotationManager pointAnnotationManager = await _controller
-    //     .annotations
-    //     .createPointAnnotationManager();
+    await Future.wait([
+      LayerService.addSourceAndLayers(
+        _controller!,
+        await _mapRepo.getWaterfallJson(),
+        MapConstants.waterfallID,
+      ),
+      LayerService.addSourceAndLayers(
+        _controller!,
+        await _mapRepo.getPeaksJson(asString: true),
+        MapConstants.peakID,
+      ),
+    ]);
 
-    // Set<Mountain> mountainList = await _mountainsRepository.getMountains();
-
-    // final mountainIcon = await ImageController.loadImage(
-    //   AppAssets.mountainIcon,
-    // );
-
-    // List<PointAnnotationOptions> annotations = [];
-    // for (var mountain in mountainList.take(100)) {
-    //   annotations.add(
-    //     PointAnnotationOptions(
-    //       geometry: Point(
-    //         coordinates: Position(
-    //           mountain.coordinates.lng,
-    //           mountain.coordinates.lat,
-    //         ),
-    //       ),
-    //       image: mountainIcon,
-    //       // iconImage: "mountain-15",
-    //       iconSize: 0.1,
-    //       textField: mountain.properties.nam,
-    //       textOffset: [0, 1.5],
-    //     ),
-    //   );
-    // }
-
-    // await pointAnnotationManager.createMulti(annotations);
-    // pointAnnotationManager.tapEvents(
-    //   onTap: (PointAnnotation annotation) {
-    //     log('Tapped mountain: ${annotation.textField}');
-    //     log(annotation.geometry.coordinates.toJson().toString());
-    //   },
-    // );
-
-    // await addMountainsLayers(_controller!, await _mapRepo.getPeaksJson());
-    await addSourceAndLayers(
-      _controller!,
-      await _mapRepo.getWaterfallJson(),
-      MapConstants.waterfallID,
-    );
-    await addSourceAndLayers(
-      _controller!,
-      await _mapRepo.getPeaksJson(),
-      MapConstants.peakID,
-    );
-
-    await addOnMapTapListener(_controller!, [
+    final tapStream = addOnMapTapListener(_controller!, [
       MapConstants.peakID,
       MapConstants.waterfallID,
     ]);
 
-    // setupPositionTracking(_controller!);
+    tapStream.listen((selectedFeature) async {
+      if (_selectedFeatureDTO.featureId.isNotEmpty) {
+        await _controller!.setFeatureState(
+          _selectedFeatureDTO.sourceID,
+          null,
+          _selectedFeatureDTO.featureId,
+          jsonEncode({'selected': false}),
+        );
+      }
 
-    // _locationTracking();
+      await _controller!.setFeatureState(
+        selectedFeature.sourceID,
+        null,
+        selectedFeature.featureId,
+        jsonEncode({'selected': true}),
+      );
+      _selectedFeatureDTO = selectedFeature;
+    });
 
     emit(MapStatus(isLoading: false, mountains: []));
     add(MapMoveCamera());
-
-    // emit(MapStatus(isLoading: false, mountains: mountainList.toList()));
   }
 
   Future<void> _onReload(MapReload event, Emitter<MapState> emit) async {
     emit(MapStatus(isLoading: false));
   }
 
-  Future<void> _onCameraChanged(
-    MapCameraChanged event,
+  Future<void> _onCameraIdle(
+    MapCameraIdle event,
     Emitter<MapState> emit,
   ) async {
     if (_controller == null) return;
-    await filterVisiblePoints(_controller!, event.cameraState);
+    // await filterVisiblePoints(_controller!, event.cameraState);
+    // final visibleRegion = await _controller!.coordinateBoundsForCamera(
+    //   event.cameraState.toCameraOptions(),
+    // );
+
+    // final Map<String, dynamic> geoJson = await _mapRepo.getPeaksJson(
+    //   asString: false,
+    // );
+    // final List<BasePoint> visiblePoints = GeoJsonHelper.filterAndMapFeatures(
+    //   geoJson: geoJson,
+    //   bounds: visibleRegion,
+    // );
+    // updateMapMarkers(
+    //   visiblePoints,
+    //   _pointAnnotationManager,
+    //   _activeAnnotations,
+    // );
   }
 
   Future<void> _onMoveCamera(
@@ -159,11 +149,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     );
   }
 
-  Future<void> _onStyleLoaded(
-    MapStyleLoaded event,
-    Emitter<MapState> emit,
-  ) async {}
-
   Future<void> _onStartTracking(
     MapStartTracking event,
     Emitter<MapState> emit,
@@ -178,13 +163,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     await addTrackingPolilyne(_controller!, position);
 
     // await actualizarRutaEnMapa(await database.getAllPoints(), _controller);
-  }
-
-  Future<void> _onNavigateToSearch(
-    MapNavigateToSearch event,
-    Emitter<MapState> emit,
-  ) async {
-    NavigationService.go(Routes.SEARCH, actualUri: _actualUri);
   }
 }
 
@@ -203,7 +181,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 //   // muestra en mapa (e.g. flutter_map o google_maps_flutter)
 // }
 
-Future<void> ajustarCamaraATodaLaRuta(
+Future<void> adjustCameraToTrack(
   List<TrackingPoint> puntosBackend,
   MapboxMap? controller,
 ) async {

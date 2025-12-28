@@ -17,18 +17,13 @@ class MapReload extends MapEvent {
   List<Object?> get props => [];
 }
 
-class MapCameraChanged extends MapEvent {
-  MapCameraChanged(this.cameraState);
+class MapCameraIdle extends MapEvent {
+  MapCameraIdle(this.cameraState);
 
   final CameraState cameraState;
 
   @override
   List<Object?> get props => [cameraState];
-}
-
-class MapStyleLoaded extends MapEvent {
-  @override
-  List<Object?> get props => [];
 }
 
 class MapMoveCamera extends MapEvent {
@@ -42,11 +37,6 @@ class MapMoveCamera extends MapEvent {
 }
 
 class MapStartTracking extends MapEvent {
-  @override
-  List<Object?> get props => [];
-}
-
-class MapNavigateToSearch extends MapEvent {
   @override
   List<Object?> get props => [];
 }

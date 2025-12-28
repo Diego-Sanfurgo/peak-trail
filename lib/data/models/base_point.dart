@@ -5,6 +5,8 @@
 import 'dart:convert';
 
 import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mb;
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:peak_trail/core/utils/normalize_map.dart';
 
 BasePoint basePointFromJson(String str) => BasePoint.fromJson(json.decode(str));
@@ -57,6 +59,12 @@ class BaseGeometry {
     "type": type,
     "coordinates": coordinates.toJson()['coordinates'],
   };
+
+  mb.Position toMapboxPosition() =>
+      mb.Position(coordinates.longitude, coordinates.latitude);
+
+  mb.Point toMapboxPoint() => mb.Point.fromJson(coordinates.toJson());
+  geo.Position toGeoPosition() => geo.Position.fromMap(coordinates.toJson());
 }
 
 class BaseProperties {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../persistence/tracking/native_location_service.dart';
-import '../persistence/tracking/tracking_database.dart';
+import '../../core/services/native_location_service.dart';
+import '../../persistence/tracking/tracking_database.dart';
 
 class LocationDebugScreen extends StatefulWidget {
   final TrackingDatabase database; // Pásale la instancia de tu DB

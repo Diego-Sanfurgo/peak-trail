@@ -4,7 +4,7 @@ Future<void> filterVisiblePoints(
   MapboxMap controller,
   CameraState camera,
 ) async {
-  if (!await controller.style.styleLayerExists("unclustered-points")) return;
+  if (!await controller.style.styleLayerExists("points")) return;
 
   final visibleRegion = await controller.coordinateBoundsForCamera(
     camera.toCameraOptions(),
@@ -38,7 +38,7 @@ Future<void> filterVisiblePoints(
     ],
   };
 
-  Layer layer = await controller.style.getLayer("unclustered-points") as Layer;
+  Layer layer = await controller.style.getLayer("points") as Layer;
   layer.filter = ["within", bboxPolygon];
   await controller.style.updateLayer(layer);
 }

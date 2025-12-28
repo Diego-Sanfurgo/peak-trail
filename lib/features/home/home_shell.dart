@@ -14,7 +14,6 @@ class HomeShellView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routerState = GoRouterState.of(context);
     // Nota: El MapBloc podría necesitar moverse arriba en el árbol (en main.dart)
     // si necesitas que persista al cambiar de rutas fuera del Shell,
     // pero aquí está bien si solo vive dentro del Shell.
@@ -28,10 +27,8 @@ class HomeShellView extends StatelessWidget {
     return RepositoryProvider(
       create: (context) => MapRepository(PeakProvider(), WaterfallProvider()),
       child: BlocProvider(
-        create: (context) => MapBloc(
-          actualUri: routerState.uri,
-          mapRepository: context.read<MapRepository>(),
-        ),
+        create: (context) =>
+            MapBloc(mapRepository: context.read<MapRepository>()),
         child: Scaffold(
           // El body es el navigationShell mismo.
           // GoRouter se encarga de usar un IndexedStack internamente.

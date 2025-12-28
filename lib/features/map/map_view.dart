@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:peak_trail/core/services/navigation_service.dart';
 import 'package:peak_trail/features/map/widgets/mocked_search_bar.dart';
 
 import '../home/bloc/map_bloc.dart';
@@ -97,8 +101,10 @@ class _BodyState extends State<_Body> {
           left: 16,
           right: 16,
           child: GestureDetector(
-            onTap: () =>
-                BlocProvider.of<MapBloc>(context).add(MapNavigateToSearch()),
+            onTap: () => NavigationService.go(
+              Routes.SEARCH,
+              actualUri: GoRouterState.of(context).uri,
+            ),
             child: MockedSearchBar(),
           ),
         ),
@@ -117,7 +123,7 @@ class _MapboxWidget extends StatefulWidget {
 class _MapboxWidgetState extends State<_MapboxWidget> {
   MapboxMap? mapController;
   late final MapBloc bloc;
-  // Timer? idleTimer;
+  Timer? idleTimer;
 
   @override
   void initState() {
@@ -127,7 +133,7 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
 
   @override
   void dispose() {
-    // mapController?.dispose();
+    mapController?.dispose();
     super.dispose();
   }
 
@@ -172,18 +178,13 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
           //   if (cameraState == null) return;
           //   bloc.add(MapCameraChanged(cameraState));
           // },
-          // onMapIdleListener: (mapIdleEventData) {
-          //   log("MAP IDLE");
-          // },
-          // onCameraChangeListener: (cameraChangedEventData) {
-          //   if (mapController == null) return;
-          //   // idleTimer?.cancel();
-          //   // idleTimer = Timer(const Duration(milliseconds: 600), () async {
-          //   //   // await _onCameraIdle();
-          //   //   bloc.add(MapCameraChanged(cameraChangedEventData.cameraState));
-          //   // });
-          //   bloc.add(MapCameraChanged(cameraChangedEventData.cameraState));
-          // },
+          onCameraChangeListener: (cameraChangedEventData) {
+            if (mapController == null) return;
+            idleTimer?.cancel();
+            idleTimer = Timer(const Duration(milliseconds: 500), () async {
+              bloc.add(MapCameraIdle(cameraChangedEventData.cameraState));
+            });
+          },
         );
       },
     );
