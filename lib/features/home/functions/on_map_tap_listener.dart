@@ -46,11 +46,13 @@ Stream<SelectedFeatureDTO> addOnMapTapListener(
       MapAnimationOptions(duration: 500),
     );
 
+    final normalizedMap = normalizeMap(rawFeature);
+
     streamController.add(
       SelectedFeatureDTO(
         featureId: isCluster
             ? ''
-            : normalizeMap(rawFeature)['properties']['id'],
+            : normalizedMap['properties']['id'] ?? normalizedMap['id'],
         isCluster: isCluster,
         sourceID: sourceIDSelected,
       ),

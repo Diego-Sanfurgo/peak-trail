@@ -82,7 +82,7 @@ class LayerService {
             ["has", "point_count"],
           ],
           iconImage: '$sourceBaseID-marker',
-          textOffset: [0, 1.8],
+          textOffset: [0, 2],
           textColor: Colors.black.toARGB32(),
           textSize: 14.0,
           textHaloColor: Colors.white.toARGB32(),
@@ -145,7 +145,12 @@ class LayerService {
       await controller.style.setStyleLayerProperty(
         unclusteredLayerID,
         'text-field',
-        isPeak ? ["get", "name"] : ["get", "fna"],
+        [
+          "concat",
+          isPeak ? ["get", "name"] : ["get", "fna"],
+          "\n",
+          ["get", "alt"],
+        ],
       );
     }
   }
