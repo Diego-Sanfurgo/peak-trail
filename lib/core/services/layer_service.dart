@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -82,63 +81,25 @@ class LayerService {
             ["has", "point_count"],
           ],
           iconImage: '$sourceBaseID-marker',
-          textOffset: [0, 2],
+          iconSize: 0.4,
+          textOffset: [0, 3],
           textColor: Colors.black.toARGB32(),
           textSize: 14.0,
           textHaloColor: Colors.white.toARGB32(),
           textHaloWidth: 1.5,
           iconAllowOverlap: true,
           iconIgnorePlacement: true,
+          iconSizeExpression: [
+            "case",
+            [
+              "boolean",
+              ["feature-state", "selected"],
+              false,
+            ],
+            2.5, // Selected size
+            1.0, // Normal size
+          ],
         ),
-      );
-
-      // Set Dynamic Properties via expressions using setStyleLayerProperty
-
-      // Icon Size changes when 'selected' feature state is true
-      await controller.style.setStyleLayerProperty(
-        unclusteredLayerID,
-        'icon-size',
-        [
-          "case",
-          [
-            "boolean",
-            ["feature-state", "selected"],
-            false,
-          ],
-          1.8, // Selected size
-          1.0, // Normal size
-        ],
-      );
-
-      // Halo properties
-      await controller.style.setStyleLayerProperty(
-        unclusteredLayerID,
-        'icon-halo-color',
-        [
-          "case",
-          [
-            "boolean",
-            ["feature-state", "selected"],
-            false,
-          ],
-          "#00B7FF",
-          "rgba(0,0,0,0)",
-        ],
-      );
-
-      await controller.style.setStyleLayerProperty(
-        unclusteredLayerID,
-        'icon-halo-width',
-        [
-          "case",
-          [
-            "boolean",
-            ["feature-state", "selected"],
-            false,
-          ],
-          2.5,
-          0.0,
-        ],
       );
 
       // Dynamic text field based on source type
@@ -171,15 +132,19 @@ class LayerService {
         retryCount++;
       }
 
-      final Uint8List imageBytes = await ImageService.loadImage(
+      final SizedImage imageBytes = await ImageService.loadSizedImage(
         _getAssetPath(sourceBaseID),
       );
 
       await controller.style.addStyleImage(
         imageName,
-        1.0,
-        MbxImage(width: 24, height: 24, data: imageBytes),
-        false,
+        1,
+        MbxImage(
+          width: imageBytes.width,
+          height: imageBytes.height,
+          data: imageBytes.data,
+        ),
+        true,
         [],
         [],
         null,
@@ -195,9 +160,9 @@ class LayerService {
 String _getAssetPath(String sourceBaseID) {
   switch (sourceBaseID) {
     case 'waterfall':
-      return AppAssets.WATERFALL_24;
+      return AppAssets.WATERFALL_PIN;
     case 'peak':
-      return AppAssets.LANDSCAPE_24;
+      return AppAssets.MOUNTAIN_PIN;
     default:
       throw ArgumentError('Unsupported sourceBaseID: $sourceBaseID');
   }

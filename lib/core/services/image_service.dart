@@ -10,7 +10,20 @@ class ImageService {
     return imageData;
   }
 
-  static Future<Uint8List> resizeImage(
+  static Future<SizedImage> loadSizedImage(String imagePath) async {
+    final ByteData bytes = await rootBundle.load(imagePath);
+    final Uint8List imageData = bytes.buffer.asUint8List();
+    final Codec codec = await instantiateImageCodec(imageData);
+    final FrameInfo frame = await codec.getNextFrame();
+    final Image image = frame.image;
+    return SizedImage(
+      data: imageData,
+      width: image.width,
+      height: image.height,
+    );
+  }
+
+  static Future<SizedImage> resizeImage(
     Uint8List data,
     int targetWidth,
     int targetHeight,
@@ -29,6 +42,22 @@ class ImageService {
       format: ImageByteFormat.rawRgba,
     );
 
-    return byteData!.buffer.asUint8List();
+    return SizedImage(
+      data: byteData!.buffer.asUint8List(),
+      width: resized.width,
+      height: resized.height,
+    );
   }
+}
+
+class SizedImage {
+  final Uint8List data;
+  final int width;
+  final int height;
+
+  const SizedImage({
+    required this.data,
+    required this.width,
+    required this.height,
+  });
 }
