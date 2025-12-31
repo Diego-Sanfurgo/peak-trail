@@ -5,7 +5,7 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'image_service.dart';
 
 class LayerService {
-  static Future<void> addSourceAndLayers(
+  static Future<void> addPointLayers(
     MapboxMap controller,
     String geoJson,
     String sourceBaseID,
@@ -163,6 +163,8 @@ String _getAssetPath(String sourceBaseID) {
       return AppAssets.WATERFALL_PIN;
     case 'peak':
       return AppAssets.MOUNTAIN_PIN;
+    case 'pass':
+      return AppAssets.MOUNTAIN_PASS_PIN;
     default:
       throw ArgumentError('Unsupported sourceBaseID: $sourceBaseID');
   }

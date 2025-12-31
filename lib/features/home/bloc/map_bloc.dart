@@ -61,21 +61,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     );
 
     await Future.wait([
-      LayerService.addSourceAndLayers(
+      LayerService.addPointLayers(
         _controller!,
         await _mapRepo.getWaterfallJson(),
         MapConstants.waterfallID,
       ),
-      LayerService.addSourceAndLayers(
+      LayerService.addPointLayers(
         _controller!,
         await _mapRepo.getPeaksJson(asString: true),
         MapConstants.peakID,
+      ),
+      LayerService.addPointLayers(
+        _controller!,
+        await _mapRepo.getPassJson(),
+        MapConstants.mountainPassID,
       ),
     ]);
 
     final tapStream = addOnMapTapListener(_controller!, [
       MapConstants.peakID,
       MapConstants.waterfallID,
+      MapConstants.mountainPassID,
     ]);
 
     tapStream.listen((selectedFeature) async {

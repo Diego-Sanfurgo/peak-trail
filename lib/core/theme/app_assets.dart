@@ -7,4 +7,6 @@ class AppAssets {
   static const String VOLCANO_24 = 'assets/images/volcano_24dp.png';
   static const String WATERFALL_PIN = 'assets/images/waterfall_pin_128x128.png';
   static const String VOLCANO_PIN = 'assets/images/bridge_pin_128x128.png';
+  static const String MOUNTAIN_PASS_PIN =
+      'assets/images/bridge_pin_128x128.png';
 }
