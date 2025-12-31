@@ -12,9 +12,17 @@ class LayerService {
   ) async {
     final String sourceID = '$sourceBaseID-source';
     final bool isPeak = sourceBaseID.contains('peak');
-
+    final bool isPass = sourceBaseID.contains('pass');
+    final bool isWaterfall = sourceBaseID.contains('waterfall');
     // Add Image first so it's ready for the layers
     await addImageToStyle(controller, sourceBaseID);
+
+    final int circleClusterColor = switch (true) {
+      _ when isPeak => Colors.black38.toARGB32(),
+      _ when isPass => Colors.green.withValues(alpha: 0.6).toARGB32(),
+      _ when isWaterfall => Colors.purple.withValues(alpha: 0.6).toARGB32(),
+      _ => Colors.black38.toARGB32(),
+    };
 
     // Add Source
     if (!await controller.style.styleSourceExists(sourceID)) {
@@ -38,9 +46,7 @@ class LayerService {
           id: clusterLayerID,
           sourceId: sourceID,
           filter: ["has", "point_count"],
-          circleColor: isPeak
-              ? Colors.black38.toARGB32()
-              : Colors.blue.withValues(alpha: 0.6).toARGB32(),
+          circleColor: circleClusterColor,
           circleRadius: 20,
           circleStrokeColor: Colors.white.toARGB32(),
           circleStrokeWidth: 2,
@@ -82,6 +88,8 @@ class LayerService {
           ],
           iconImage: '$sourceBaseID-marker',
           iconSize: 0.4,
+          iconHaloColor: Colors.white.toARGB32(),
+          iconHaloWidth: 2,
           textOffset: [0, 3],
           textColor: Colors.black.toARGB32(),
           textSize: 14.0,
@@ -112,6 +120,47 @@ class LayerService {
           "\n",
           ["get", "alt"],
         ],
+      );
+    }
+  }
+
+  static Future<void> addPolygonLayers(
+    MapboxMap controller,
+    String geoJson,
+    String sourceBaseID,
+  ) async {
+    final String sourceID = '$sourceBaseID-source';
+
+    // Add Source
+    if (!await controller.style.styleSourceExists(sourceID)) {
+      await controller.style.addSource(
+        GeoJsonSource(id: sourceID, data: geoJson, cluster: false),
+      );
+    }
+
+    // Fill Layer
+    final String fillLayerID = '$sourceBaseID-fill';
+    if (!await controller.style.styleLayerExists(fillLayerID)) {
+      await controller.style.addLayer(
+        FillLayer(
+          id: fillLayerID,
+          sourceId: sourceID,
+          fillColor: Colors.blue.withValues(alpha: 0.3).toARGB32(),
+          fillOutlineColor: Colors.blue.withValues(alpha: 0.8).toARGB32(),
+        ),
+      );
+    }
+
+    // Line Layer
+    final String lineLayerID = '$sourceBaseID-line';
+    if (!await controller.style.styleLayerExists(lineLayerID)) {
+      await controller.style.addLayer(
+        LineLayer(
+          id: lineLayerID,
+          sourceId: sourceID,
+          lineColor: Colors.blue.toARGB32(),
+          lineWidth: 1.5,
+        ),
       );
     }
   }
@@ -165,6 +214,8 @@ String _getAssetPath(String sourceBaseID) {
       return AppAssets.MOUNTAIN_PIN;
     case 'pass':
       return AppAssets.MOUNTAIN_PASS_PIN;
+    case 'lake':
+      return AppAssets.VOLCANO_PIN;
     default:
       throw ArgumentError('Unsupported sourceBaseID: $sourceBaseID');
   }

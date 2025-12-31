@@ -18,6 +18,7 @@ class MapConstants {
   static const String waterfallID = 'waterfall';
   static const String peakID = 'peak';
   static const String mountainPassID = 'pass';
+  static const String lakeID = 'lake';
 
   static const String trackingSourceID = "tracking-source";
   static const String trackingLayerID = "tracking-layer";

@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:peak_trail/data/models/lake.dart';
 import 'package:peak_trail/data/models/mountain_pass.dart';
+import 'package:peak_trail/data/providers/lake_provider.dart';
 import 'package:peak_trail/data/providers/peak_provider.dart';
 import 'package:peak_trail/data/providers/waterfall_provider.dart';
 
@@ -13,11 +15,13 @@ class MapRepository {
     this._peakProvider,
     this._waterfallProvider,
     this._passProvider,
+    this._lakeProvider,
   );
 
   final PeakProvider _peakProvider;
   final WaterfallProvider _waterfallProvider;
   final MountainPassProvider _passProvider;
+  final LakeProvider _lakeProvider;
 
   Future<Set<Peak>> getPeaks() async {
     try {
@@ -67,6 +71,24 @@ class MapRepository {
   Future<String> getPassJson() async {
     try {
       return await _passProvider.fetchPassJson();
+    } on Exception catch (e) {
+      log(e.toString());
+      return '';
+    }
+  }
+
+  Future<Set<Lake>> getLakes() async {
+    try {
+      return await _lakeProvider.fetchLakes();
+    } on Exception catch (e) {
+      log(e.toString());
+      return {};
+    }
+  }
+
+  Future<String> getLakesJson() async {
+    try {
+      return await _lakeProvider.fetchLakesJson();
     } on Exception catch (e) {
       log(e.toString());
       return '';

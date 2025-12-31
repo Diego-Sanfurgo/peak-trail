@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:peak_trail/data/providers/lake_provider.dart';
 import 'package:peak_trail/data/providers/pass_provider.dart';
 import 'package:peak_trail/data/providers/peak_provider.dart';
 import 'package:peak_trail/data/providers/waterfall_provider.dart';
@@ -30,6 +31,7 @@ class HomeShellView extends StatelessWidget {
         PeakProvider(),
         WaterfallProvider(),
         MountainPassProvider(),
+        LakeProvider(),
       ),
       child: BlocProvider(
         create: (context) =>
