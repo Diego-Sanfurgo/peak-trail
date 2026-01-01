@@ -82,7 +82,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       MapConstants.peakID,
       MapConstants.waterfallID,
       MapConstants.mountainPassID,
-      MapConstants.lakeID,
     ]);
 
     tapStream.listen((selectedFeature) async {

@@ -32,8 +32,8 @@ class LayerService {
           data: geoJson,
           cluster: true,
           clusterMaxZoom: 16,
-          clusterRadius: 50,
-          clusterMinPoints: 2,
+          clusterRadius: 100,
+          clusterMinPoints: 4,
         ),
       );
     }
