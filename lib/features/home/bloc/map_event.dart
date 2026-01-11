@@ -35,8 +35,3 @@ class MapMoveCamera extends MapEvent {
   @override
   List<Object?> get props => [zoomLevel, targetLocation];
 }
-
-class MapStartTracking extends MapEvent {
-  @override
-  List<Object?> get props => [];
-}

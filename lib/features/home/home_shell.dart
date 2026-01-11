@@ -44,9 +44,16 @@ class HomeShellView extends StatelessWidget {
             // Usamos el índice actual del shell
             currentIndex: navigationShell.currentIndex,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.map), label: "Mapa"),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+                icon: Icon(Icons.travel_explore_outlined),
+                label: "Mapa",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add_location_alt_outlined),
+                label: "Grabar",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline_outlined),
                 label: "Perfil",
               ),
             ],

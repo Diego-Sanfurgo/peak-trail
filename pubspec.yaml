@@ -41,6 +41,9 @@ dependencies:
   path: ^1.9.1
   image: ^4.7.2
 
+  #visuals
+  action_slider: ^0.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

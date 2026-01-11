@@ -4,7 +4,7 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-part 'tracking_database.g.dart';
+part '../models/tracking_database.g.dart';
 
 // Definición de la tabla
 class TrackingPoints extends Table {

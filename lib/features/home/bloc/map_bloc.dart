@@ -6,7 +6,6 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:equatable/equatable.dart';
-import 'package:geolocator/geolocator.dart' as geo;
 import 'package:peak_trail/core/services/layer_service.dart';
 import 'package:peak_trail/features/home/dto/selected_feature_dto.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,9 +18,8 @@ import 'package:peak_trail/data/models/peak.dart';
 import 'package:peak_trail/data/repositories/map_repository.dart';
 
 import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
-import 'package:peak_trail/features/home/functions/add_tracking_polyline.dart';
 
-import 'package:peak_trail/persistence/tracking/tracking_database.dart';
+import 'package:peak_trail/data/providers/tracking_database.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -35,7 +33,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapReload>(_onReload);
     on<MapCameraIdle>(_onCameraIdle);
     on<MapMoveCamera>(_onMoveCamera);
-    on<MapStartTracking>(_onStartTracking);
   }
 
   MapboxMap? _controller;
@@ -154,38 +151,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       MapAnimationOptions(duration: 500),
     );
   }
-
-  Future<void> _onStartTracking(
-    MapStartTracking event,
-    Emitter<MapState> emit,
-  ) async {
-    if (_controller == null) return;
-
-    // final TrackingDatabase database = TrackingDatabase();
-
-    geo.Position? position = _locationService.lastPosition;
-    if (position == null) return;
-
-    await addTrackingPolilyne(_controller!, position);
-
-    // await actualizarRutaEnMapa(await database.getAllPoints(), _controller);
-  }
 }
-
-// Future<void> _locationTracking() async {
-//   final traceService = TraceService();
-//   traceService.onLocation.listen((p) {
-//     // actualizar UI: velocidad, altitud, desnivel, ETA calculado, etc.
-//   });
-
-//   // al iniciar:
-//   await traceService.startTracking();
-
-//   // para mostrar trazas offline:
-//   final traces = await traceService
-//       .getAllTraces(); // ordenadas por id/timestamp
-//   // muestra en mapa (e.g. flutter_map o google_maps_flutter)
-// }
 
 Future<void> adjustCameraToTrack(
   List<TrackingPoint> puntosBackend,

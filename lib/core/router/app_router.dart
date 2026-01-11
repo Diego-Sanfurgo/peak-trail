@@ -1,9 +1,10 @@
 import 'package:go_router/go_router.dart';
-import 'package:peak_trail/core/utils/constant_and_variables.dart';
-import 'package:peak_trail/persistence/tracking/tracking_database.dart';
-import 'route_widgets_export.dart';
 
-// Asegúrate de importar tu HomeShellView correctamente
+import 'package:peak_trail/core/utils/constant_and_variables.dart';
+import 'package:peak_trail/data/providers/tracking_database.dart';
+import 'package:peak_trail/features/tracking_map/tracking_map.dart';
+
+import 'route_widgets_export.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -36,13 +37,23 @@ class AppRouter {
             ],
           ),
 
-          // RAMA 2: Perfil
+          // RAMA 2: mapa de seguimiento
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: "/tracking_map",
+                builder: (context, state) => TrackingMapView(),
+                // LocationDebugScreen(database: TrackingDatabase()),
+              ),
+            ],
+          ),
+
+          //RAMA 3: Perfil
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: "/profile",
-                builder: (context, state) =>
-                    LocationDebugScreen(database: TrackingDatabase()),
+                builder: (context, state) => const ProfileView(),
               ),
             ],
           ),

@@ -73,8 +73,7 @@ class _BodyState extends State<_Body> {
               FloatingActionButton(
                 heroTag: Key("tracking_FAB"),
                 child: Icon(Icons.play_circle_outlined),
-                onPressed: () =>
-                    BlocProvider.of<MapBloc>(context).add(MapStartTracking()),
+                onPressed: () => NavigationService.go(Routes.TRACKING_MAP),
               ),
               FloatingActionButton(
                 heroTag: Key("location_FAB"),
@@ -161,7 +160,7 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
             controller.scaleBar.updateSettings(
               ScaleBarSettings(
                 position: OrnamentPosition.BOTTOM_LEFT,
-                // marginTop: MediaQuery.of(context).size.height * 0.08,
+                enabled: false,
               ),
             );
             bloc.add(MapCreated(controller));
@@ -169,15 +168,6 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
           styleUri: MapboxStyles.OUTDOORS,
           mapOptions: MapOptions(pixelRatio: 2),
           cameraOptions: CameraOptions(zoom: 5),
-          // onScrollListener: (mapContext) async {
-          //   log(mapContext.gestureState.name);
-          //   if (mapContext.gestureState.index != GestureState.ended.index) {
-          //     return;
-          //   }
-          //   CameraState? cameraState = await mapController?.getCameraState();
-          //   if (cameraState == null) return;
-          //   bloc.add(MapCameraChanged(cameraState));
-          // },
           onCameraChangeListener: (cameraChangedEventData) {
             if (mapController == null) return;
             idleTimer?.cancel();
