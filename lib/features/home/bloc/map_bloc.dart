@@ -25,7 +25,7 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapBloc({required MapRepository mapRepository})
+  MapBloc({required TrackingMapRepository mapRepository})
     : _mapRepo = mapRepository,
       super(MapStatus(isLoading: true)) {
     _init();
@@ -36,7 +36,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   MapboxMap? _controller;
-  final MapRepository _mapRepo;
+  final TrackingMapRepository _mapRepo;
   final LocationService _locationService = LocationService.instance;
   SelectedFeatureDTO _selectedFeatureDTO = SelectedFeatureDTO.empty();
 

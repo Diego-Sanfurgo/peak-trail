@@ -1,78 +1,9 @@
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
-
-import 'package:geolocator/geolocator.dart' as geo;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:peak_trail/data/providers/tracking_database.dart';
 import 'package:peak_trail/core/utils/constant_and_variables.dart';
 
-Future<void> addTrackingPolilyne(
-  MapboxMap controller,
-  geo.Position position,
-) async {
-  // 1. Crear una fuente GeoJSON vacía
-  final source = GeoJsonSource(
-    id: MapConstants.trackingSourceID,
-    data: Feature(
-      id: MapConstants.trackingFeatureID,
-      geometry: LineString(
-        coordinates: [Position(position.longitude, position.latitude)],
-      ),
-    ).toJson().toString(),
-  );
-
-  final polylineManager = await controller.annotations
-      .createPolylineAnnotationManager();
-  polylineManager.createMulti([
-    PolylineAnnotationOptions(
-      geometry: LineString(
-        coordinates: [Position(position.longitude, position.latitude)],
-      ),
-
-      lineColor: Colors.orange.toARGB32(),
-      lineWidth: 5.0,
-      lineJoin: LineJoin.ROUND,
-    ),
-  ]);
-
-  // Stream.periodic(
-  //   const Duration(seconds: 2),
-  // ).asyncMap((_) => TrackingDatabase().getAllPoints()).listen((points) {
-  //   List<Position> coordinates = points
-  //       .map((p) => Position(p.longitude, p.latitude))
-  //       .toList();
-
-  //   log("Updating polyline with ${coordinates.length} points");
-
-  //   polylineManager.deleteAll();
-  //   polylineManager.createMulti([
-  //     PolylineAnnotationOptions(
-  //       geometry: LineString(coordinates: coordinates),
-  //       lineColor: Colors.orange.toARGB32(),
-  //       lineWidth: 5.0,
-  //       lineJoin: LineJoin.ROUND,
-  //     ),
-  //   ]);
-  // });
-
-  await controller.style.addSource(source);
-
-  // 2. Crear la capa de línea conectada a esa fuente
-  final LineLayer layer = LineLayer(
-    id: MapConstants.trackingLayerID,
-    sourceId: MapConstants.trackingSourceID,
-    lineWidth: 5.0,
-    lineColor: Colors.orange.toARGB32(), // O el color hexadecimal en int
-    lineCap: LineCap.ROUND,
-    lineJoin: LineJoin.ROUND,
-  );
-
-  await controller.style.addLayer(layer);
-}
-
-Future<void> actualizarRutaEnMapa(
+Future<void> updateMapTrack(
   List<TrackingPoint> puntosBackend,
   MapboxMap? controller,
 ) async {

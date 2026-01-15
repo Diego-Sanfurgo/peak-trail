@@ -10,8 +10,8 @@ import '../models/peak.dart';
 import '../models/waterfall.dart';
 import '../providers/pass_provider.dart';
 
-class MapRepository {
-  MapRepository(
+class TrackingMapRepository {
+  TrackingMapRepository(
     this._peakProvider,
     this._waterfallProvider,
     this._passProvider,

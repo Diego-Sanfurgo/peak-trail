@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 
 import 'package:peak_trail/core/utils/constant_and_variables.dart';
-import 'package:peak_trail/data/providers/tracking_database.dart';
 import 'package:peak_trail/features/tracking_map/tracking_map.dart';
 
 import 'route_widgets_export.dart';
@@ -42,7 +41,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: "/tracking_map",
-                builder: (context, state) => TrackingMapView(),
+                builder: (context, state) => const TrackingMapView(),
                 // LocationDebugScreen(database: TrackingDatabase()),
               ),
             ],

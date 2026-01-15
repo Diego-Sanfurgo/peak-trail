@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:peak_trail/core/services/layer_service.dart';
 import 'package:peak_trail/core/services/location_service.dart';
+import 'package:peak_trail/core/utils/constant_and_variables.dart';
 import 'package:peak_trail/data/providers/tracking_database.dart';
-import 'package:peak_trail/data/repositories/map_repository.dart';
+import 'package:peak_trail/data/repositories/tracking_map_repository.dart';
 
 import '../functions/add_tracking_polyline.dart';
 
@@ -12,31 +18,132 @@ part 'tracking_map_event.dart';
 part 'tracking_map_state.dart';
 
 class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
-  TrackingMapBloc({required MapRepository mapRepository})
-    : _mapRepo = mapRepository,
-      super(TrackingMapInitial()) {
+  TrackingMapBloc({required TrackingMapRepository repository})
+    : _repository = repository,
+      super(TrackingMapState.initial()) {
+    on<TrackingMapCreated>(_onMapCreated);
     on<TrackingMapStartTracking>(_onStartTracking);
     on<TrackingMapStopTracking>(_onStopTracking);
+    on<TrackingMapPauseTracking>(_onPauseTracking);
+    on<TrackingMapResumeTracking>(_onResumeTracking);
+    on<TrackingMapCenterCameraOnUser>(_onCenterCameraOnUser);
   }
 
   MapboxMap? _controller;
-  final MapRepository _mapRepo;
+  final TrackingMapRepository _repository;
   final LocationService _locationService = LocationService.instance;
+  final TrackingDatabase _database = TrackingDatabase();
+
+  Future<void> _onMapCreated(
+    TrackingMapCreated event,
+    Emitter<TrackingMapState> emit,
+  ) async {
+    _controller = event.controller;
+    _controller!.location.updateSettings(
+      LocationComponentSettings(enabled: true, puckBearingEnabled: true),
+    );
+    add(TrackingMapCenterCameraOnUser());
+  }
 
   Future<void> _onStartTracking(
     TrackingMapStartTracking event,
     Emitter<TrackingMapState> emit,
   ) async {
-    if (_controller == null) return;
+    try {
+      if (_controller == null) return;
 
-    final TrackingDatabase database = TrackingDatabase();
+      emit(state.copyWith(status: TrackingState.START_LOADING));
 
-    geo.Position? position = _locationService.lastPosition;
-    if (position == null) return;
+      geo.Position? position = _locationService.lastPosition;
+      if (position == null) return;
 
-    await addTrackingPolilyne(_controller!, position);
+      final Map<String, dynamic> geojson = FeatureCollection(
+        features: [
+          Feature(
+            id: '000',
+            geometry: LineString(
+              coordinates: [Position(position.longitude, position.latitude)],
+            ),
+          ),
+        ],
+      ).toJson();
 
-    await actualizarRutaEnMapa(await database.getAllPoints(), _controller);
+      await LayerService.addTrackingLayer(
+        _controller!,
+        jsonEncode(geojson),
+        MapConstants.trackingID,
+      );
+      await updateMapTrack(await _database.getAllPoints(), _controller);
+
+      await Future.delayed(const Duration(seconds: 1));
+      emit(state.copyWith(status: TrackingState.STARTED));
+    } on Exception catch (e) {
+      log(e.toString());
+      emit(state.copyWith(status: TrackingState.START_FAILED));
+    }
+  }
+
+  Future<void> _onPauseTracking(
+    TrackingMapPauseTracking event,
+    Emitter<TrackingMapState> emit,
+  ) async {
+    try {
+      if (_controller == null) return;
+      // emit(state.copyWith(state: TrackingState.STOP_LOADING));
+      await updateMapTrack(await _database.getAllPoints(), _controller);
+      emit(state.copyWith(status: TrackingState.PAUSED));
+    } on Exception {
+      emit(state.copyWith(status: TrackingState.ERROR));
+    }
+  }
+
+  Future<void> _onResumeTracking(
+    TrackingMapResumeTracking event,
+    Emitter<TrackingMapState> emit,
+  ) async {
+    try {
+      if (_controller == null) return;
+      emit(state.copyWith(status: TrackingState.START_LOADING));
+      await updateMapTrack(await _database.getAllPoints(), _controller);
+      emit(state.copyWith(status: TrackingState.STARTED));
+    } on Exception catch (e) {
+      log(e.toString());
+      emit(state.copyWith(status: TrackingState.START_FAILED));
+    }
+  }
+
+  Future<void> _onStopTracking(
+    TrackingMapStopTracking event,
+    Emitter<TrackingMapState> emit,
+  ) async {
+    try {
+      if (_controller == null) return;
+      emit(state.copyWith(status: TrackingState.STOP_LOADING));
+      await updateMapTrack(await _database.getAllPoints(), _controller);
+      emit(state.copyWith(status: TrackingState.STOPPED));
+      await Future.delayed(const Duration(seconds: 1));
+      emit(state.copyWith(status: TrackingState.IDLE));
+    } on Exception {
+      emit(state.copyWith(status: TrackingState.STOPPED_FAILED));
+    }
+  }
+
+  Future<void> _onCenterCameraOnUser(
+    TrackingMapCenterCameraOnUser event,
+    Emitter<TrackingMapState> emit,
+  ) async {
+    LatLng coords = LatLng(
+      _locationService.lastPosition!.latitude,
+      _locationService.lastPosition!.longitude,
+    );
+
+    _controller?.flyTo(
+      CameraOptions(
+        zoom: 14.0,
+        center: Point(coordinates: Position(coords.longitude, coords.latitude)),
+      ),
+      MapAnimationOptions(duration: 500),
+    );
   }
 }
 
@@ -54,8 +161,3 @@ class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
 //       .getAllTraces(); // ordenadas por id/timestamp
 //   // muestra en mapa (e.g. flutter_map o google_maps_flutter)
 // }
-
-Future<void> _onStopTracking(
-  TrackingMapStopTracking event,
-  Emitter<TrackingMapState> emit,
-) async {}

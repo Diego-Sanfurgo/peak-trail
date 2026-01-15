@@ -27,7 +27,7 @@ class HomeShellView extends StatelessWidget {
     // Corrección para evitar error de contexto si usas routerState dentro del create:
     // Es más seguro instanciar el Bloc sin depender tanto del GoRouterState inmediato si es posible.
     return RepositoryProvider(
-      create: (context) => MapRepository(
+      create: (context) => TrackingMapRepository(
         PeakProvider(),
         WaterfallProvider(),
         MountainPassProvider(),
@@ -35,7 +35,7 @@ class HomeShellView extends StatelessWidget {
       ),
       child: BlocProvider(
         create: (context) =>
-            MapBloc(mapRepository: context.read<MapRepository>()),
+            MapBloc(mapRepository: context.read<TrackingMapRepository>()),
         child: Scaffold(
           // El body es el navigationShell mismo.
           // GoRouter se encarga de usar un IndexedStack internamente.

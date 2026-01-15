@@ -131,6 +131,8 @@ class LayerService {
   ) async {
     final String sourceID = '$sourceBaseID-source';
 
+    if (!await _ensureStyleIsLoaded(controller)) return;
+
     // Add Source
     if (!await controller.style.styleSourceExists(sourceID)) {
       await controller.style.addSource(
@@ -165,6 +167,38 @@ class LayerService {
     }
   }
 
+  static Future<void> addTrackingLayer(
+    MapboxMap controller,
+    String geoJson,
+    String sourceBaseID,
+  ) async {
+    final String sourceID = '$sourceBaseID-source';
+
+    if (!await _ensureStyleIsLoaded(controller)) return;
+
+    // Add Source
+    if (!await controller.style.styleSourceExists(sourceID)) {
+      await controller.style.addSource(
+        GeoJsonSource(id: sourceID, data: geoJson, cluster: false),
+      );
+    }
+
+    // Line Layer
+    final String lineLayerID = '$sourceBaseID-line';
+    if (!await controller.style.styleLayerExists(lineLayerID)) {
+      // 2. Crear la capa de línea conectada a esa fuente
+      final LineLayer layer = LineLayer(
+        id: lineLayerID,
+        sourceId: sourceID,
+        lineWidth: 5.0,
+        lineColor: Colors.orange.toARGB32(), // O el color hexadecimal en int
+        lineCap: LineCap.ROUND,
+        lineJoin: LineJoin.ROUND,
+      );
+      await controller.style.addLayer(layer);
+    }
+  }
+
   static Future<void> addImageToStyle(
     MapboxMap controller,
     String sourceBaseID,
@@ -174,12 +208,8 @@ class LayerService {
     try {
       if (await controller.style.hasStyleImage(imageName)) return;
 
-      // Ensure style is loaded before adding images
-      int retryCount = 0;
-      while (!await controller.style.isStyleLoaded() && retryCount < 10) {
-        await Future.delayed(const Duration(milliseconds: 200));
-        retryCount++;
-      }
+      // // Ensure style is loaded before adding images
+      if (!await _ensureStyleIsLoaded(controller)) return;
 
       final SizedImage imageBytes = await ImageService.loadSizedImage(
         _getAssetPath(sourceBaseID),
@@ -219,4 +249,14 @@ String _getAssetPath(String sourceBaseID) {
     default:
       throw ArgumentError('Unsupported sourceBaseID: $sourceBaseID');
   }
+}
+
+// Ensure style is loaded
+Future<bool> _ensureStyleIsLoaded(MapboxMap controller) async {
+  int retryCount = 0;
+  while (!await controller.style.isStyleLoaded() && retryCount < 10) {
+    await Future.delayed(const Duration(milliseconds: 200));
+    retryCount++;
+  }
+  return retryCount < 10;
 }

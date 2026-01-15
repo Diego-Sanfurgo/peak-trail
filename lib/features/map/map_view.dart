@@ -77,7 +77,7 @@ class _BodyState extends State<_Body> {
               ),
               FloatingActionButton(
                 heroTag: Key("location_FAB"),
-                child: Icon(Icons.my_location_rounded),
+                child: Icon(Icons.my_location_outlined),
                 onPressed: () =>
                     BlocProvider.of<MapBloc>(context).add(MapMoveCamera()),
               ),

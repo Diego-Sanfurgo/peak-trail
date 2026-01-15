@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
+
+import 'package:peak_trail/data/providers/tracking_database.dart';
+
+import 'package:peak_trail/data/repositories/tracking_map_repository.dart';
+import 'package:peak_trail/features/tracking_map/bloc/tracking_map_bloc.dart';
 import 'package:peak_trail/features/tracking_map/widgets/actions_list.dart';
 import 'package:peak_trail/features/tracking_map/widgets/metrics_grid.dart';
 
 import 'widgets/animated_action_btn.dart';
 
-class TrackingMapView extends StatefulWidget {
+class TrackingMapView extends StatelessWidget {
   const TrackingMapView({super.key});
 
   @override
-  State<TrackingMapView> createState() => _TrackingMapViewState();
+  Widget build(BuildContext context) {
+    return RepositoryProvider(
+      create: (context) => TrackingMapRepository(database: TrackingDatabase()),
+      child: BlocProvider(
+        create: (context) =>
+            TrackingMapBloc(repository: context.read<TrackingMapRepository>()),
+        child: _TrackingMapWidget(),
+      ),
+    );
+  }
 }
 
-class _TrackingMapViewState extends State<TrackingMapView> {
+class _TrackingMapWidget extends StatefulWidget {
+  const _TrackingMapWidget();
+
+  @override
+  State<_TrackingMapWidget> createState() => _TrackingMapWidgetState();
+}
+
+class _TrackingMapWidgetState extends State<_TrackingMapWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,14 +46,30 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         padding: const EdgeInsets.all(8),
         child: AnimatedActionBtn(),
       ),
-      body: Stack(
-        children: [
-          // 1. Map Layer
-          const _MapLayer(),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => Stack(
+            children: [
+              // 1. Map Layer
+              const _MapLayer(),
 
-          // 2. Bottom Sheet Layer
-          const _BottomSheetLayer(),
-        ],
+              // 2. Actions
+              Positioned(
+                bottom: constraints.maxHeight * 0.2,
+                right: 16,
+                child: FloatingActionButton(
+                  child: Icon(Icons.my_location_outlined, size: 24),
+                  onPressed: () => context.read<TrackingMapBloc>().add(
+                    TrackingMapCenterCameraOnUser(),
+                  ),
+                ),
+              ),
+
+              // 3. Bottom Sheet Layer
+              const _BottomSheetLayer(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -45,12 +83,9 @@ class _MapLayer extends StatelessWidget {
     // Basic MapWidget setup without credentials for preview structure
     // In a real app, ensure MapboxAccessToken is set in info.plist/AndroidManifest
     return mapbox.MapWidget(
-      cameraOptions: mapbox.CameraOptions(
-        center: mapbox.Point(
-          coordinates: mapbox.Position(-70.6693, -33.4489),
-        ), // Santiago, Chile
-        zoom: 13.0,
-      ),
+      onMapCreated: (controller) =>
+          context.read<TrackingMapBloc>().add(TrackingMapCreated(controller)),
+      cameraOptions: mapbox.CameraOptions(zoom: 13.0),
     );
   }
 }
