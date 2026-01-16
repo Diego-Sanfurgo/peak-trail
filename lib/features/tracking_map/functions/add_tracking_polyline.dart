@@ -1,10 +1,9 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-
-import 'package:peak_trail/data/providers/tracking_database.dart';
+import 'package:peak_trail/data/models/trace_point.dart';
 import 'package:peak_trail/core/utils/constant_and_variables.dart';
 
 Future<void> updateMapTrack(
-  List<TrackingPoint> puntosBackend,
+  List<TracePoint> puntosBackend,
   MapboxMap? controller,
 ) async {
   if (controller == null || puntosBackend.isEmpty) return;
@@ -12,7 +11,7 @@ Future<void> updateMapTrack(
   // 1. Convertir tus puntos al formato de Mapbox (Position: [lng, lat])
   // Recuerda: Mapbox usa Longitud, Latitud.
   List<Position> coordenadas = puntosBackend
-      .map((p) => Position(p.longitude, p.latitude)) // Ojo al orden
+      .map((p) => Position(p.lon, p.lat)) // Ojo al orden
       .toList();
 
   // 2. Crear la estructura GeoJSON

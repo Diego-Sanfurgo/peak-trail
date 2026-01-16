@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/services/native_location_service.dart';
+import '../../core/services/trace_service.dart';
 import '../../data/providers/tracking_database.dart';
 
 class LocationDebugScreen extends StatefulWidget {
@@ -12,7 +12,7 @@ class LocationDebugScreen extends StatefulWidget {
 }
 
 class _LocationDebugScreenState extends State<LocationDebugScreen> {
-  final NativeLocationService _nativeService = NativeLocationService();
+  final TraceService _traceService = TraceService();
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,12 @@ class _LocationDebugScreenState extends State<LocationDebugScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                onPressed: () => _nativeService.startTracking(),
+                onPressed: () => _traceService.startTracking(),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 child: const Text("Iniciar Tracking"),
               ),
               ElevatedButton(
-                onPressed: () => _nativeService.stopTracking(),
+                onPressed: () => _traceService.stopTracking(),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: const Text("Detener"),
               ),

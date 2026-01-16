@@ -8,8 +8,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:peak_trail/core/services/layer_service.dart';
 import 'package:peak_trail/core/services/location_service.dart';
+import 'package:peak_trail/core/services/trace_service.dart';
 import 'package:peak_trail/core/utils/constant_and_variables.dart';
-import 'package:peak_trail/data/providers/tracking_database.dart';
 import 'package:peak_trail/data/repositories/tracking_map_repository.dart';
 
 import '../functions/add_tracking_polyline.dart';
@@ -32,7 +32,7 @@ class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
   MapboxMap? _controller;
   final TrackingMapRepository _repository;
   final LocationService _locationService = LocationService.instance;
-  final TrackingDatabase _database = TrackingDatabase();
+  final TraceService _traceService = TraceService();
 
   Future<void> _onMapCreated(
     TrackingMapCreated event,
@@ -73,7 +73,8 @@ class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
         jsonEncode(geojson),
         MapConstants.trackingID,
       );
-      await updateMapTrack(await _database.getAllPoints(), _controller);
+      await _traceService.startTracking();
+      await updateMapTrack(await _traceService.getAllTraces(), _controller);
 
       await Future.delayed(const Duration(seconds: 1));
       emit(state.copyWith(status: TrackingState.STARTED));
@@ -90,7 +91,7 @@ class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
     try {
       if (_controller == null) return;
       // emit(state.copyWith(state: TrackingState.STOP_LOADING));
-      await updateMapTrack(await _database.getAllPoints(), _controller);
+      await updateMapTrack(await _traceService.getAllTraces(), _controller);
       emit(state.copyWith(status: TrackingState.PAUSED));
     } on Exception {
       emit(state.copyWith(status: TrackingState.ERROR));
@@ -104,7 +105,8 @@ class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
     try {
       if (_controller == null) return;
       emit(state.copyWith(status: TrackingState.START_LOADING));
-      await updateMapTrack(await _database.getAllPoints(), _controller);
+      await _traceService.startTracking();
+      await updateMapTrack(await _traceService.getAllTraces(), _controller);
       emit(state.copyWith(status: TrackingState.STARTED));
     } on Exception catch (e) {
       log(e.toString());
@@ -119,7 +121,8 @@ class TrackingMapBloc extends Bloc<TrackingMapEvent, TrackingMapState> {
     try {
       if (_controller == null) return;
       emit(state.copyWith(status: TrackingState.STOP_LOADING));
-      await updateMapTrack(await _database.getAllPoints(), _controller);
+      await _traceService.stopTracking();
+      await updateMapTrack(await _traceService.getAllTraces(), _controller);
       emit(state.copyWith(status: TrackingState.STOPPED));
       await Future.delayed(const Duration(seconds: 1));
       emit(state.copyWith(status: TrackingState.IDLE));
