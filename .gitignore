@@ -265,3 +265,10 @@ iOSInjectionProject/
 .env.dev
 launch.json
 
+#python scripts
+*.py
+scripts/venv
+
+#dstore
+*.DStore
+

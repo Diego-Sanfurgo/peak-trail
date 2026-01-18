@@ -15,7 +15,6 @@ dependencies:
 
   #state
   bloc: ^9.1.0
-  # bloc_lint: ^0.3.3
   equatable: ^2.0.7
   flutter_bloc: ^9.1.1
 
@@ -24,22 +23,24 @@ dependencies:
   url_launcher: ^6.3.2
 
   #map
-  mapbox_maps_flutter: ^2.17.0
-  geolocator: ^14.0.2
   latlong2: ^0.9.1
+  geolocator: ^14.0.2
+  mapbox_maps_flutter: ^2.17.0
 
   #permissions
   permission_handler: ^12.0.1
 
   #utils
+  http: ^1.6.0
+  path: ^1.9.1
+  image: ^4.7.2
   meta: ^1.16.0
+  path_provider: ^2.1.5
 
   #database
   drift: ^2.30.0
   drift_flutter: ^0.2.8
-  path_provider: ^2.1.5
-  path: ^1.9.1
-  image: ^4.7.2
+  supabase_flutter: ^2.12.0
 
   #visuals
   action_slider: ^0.7.0
@@ -48,8 +49,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^6.0.0
   bloc_lint: ^0.3.3
+  flutter_lints: ^6.0.0
+
   #database
   drift_dev: ^2.30.0
   build_runner: ^2.10.4
