@@ -10,6 +10,9 @@
             "type": "dart",
             "toolArgs": [
                 "--dart-define=MAPBOX_TOKEN=your_MAPBOX_TOKEN",
+                "--dart-define=SUPABASE_SECRET=$sb_secret__JJziuvGnX2yIcPpVxcwSQ_o_zPSV ",
+                "--dart-define=SUPABASE_PUBLISHABLE=$sb_publishable_gLO3tbcgqyvLLDMPXljV2g_v6ffzLAx",
+                "--dart-define=SUPABASE_URL=$https://uolttugqyggzheuwblht.supabase.co",
             ]
         },
         {
@@ -18,7 +21,10 @@
             "type": "dart",
             "flutterMode": "profile",
             "toolArgs": [
-                 "--dart-define=MAPBOX_TOKEN=your_MAPBOX_TOKEN",
+                "--dart-define=MAPBOX_TOKEN=your_MAPBOX_TOKEN",
+                "--dart-define=SUPABASE_SECRET=$sb_secret__JJziuvGnX2yIcPpVxcwSQ_o_zPSV ",
+                "--dart-define=SUPABASE_PUBLISHABLE=$sb_publishable_gLO3tbcgqyvLLDMPXljV2g_v6ffzLAx",
+                "--dart-define=SUPABASE_URL=$https://uolttugqyggzheuwblht.supabase.co",
             ]
         },
         {
@@ -28,6 +34,9 @@
             "flutterMode": "release",
             "toolArgs": [
                 "--dart-define=MAPBOX_TOKEN=your_MAPBOX_TOKEN",
+                "--dart-define=SUPABASE_SECRET=$sb_secret__JJziuvGnX2yIcPpVxcwSQ_o_zPSV ",
+                "--dart-define=SUPABASE_PUBLISHABLE=$sb_publishable_gLO3tbcgqyvLLDMPXljV2g_v6ffzLAx",
+                "--dart-define=SUPABASE_URL=$https://uolttugqyggzheuwblht.supabase.co",
             ]
         },
         

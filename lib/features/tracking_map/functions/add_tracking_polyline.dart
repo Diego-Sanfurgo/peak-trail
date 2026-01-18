@@ -3,14 +3,14 @@ import 'package:peak_trail/data/models/trace_point.dart';
 import 'package:peak_trail/core/utils/constant_and_variables.dart';
 
 Future<void> updateMapTrack(
-  List<TracePoint> puntosBackend,
+  List<TracePoint> tracePointList,
   MapboxMap? controller,
 ) async {
-  if (controller == null || puntosBackend.isEmpty) return;
+  if (controller == null || tracePointList.isEmpty) return;
 
   // 1. Convertir tus puntos al formato de Mapbox (Position: [lng, lat])
   // Recuerda: Mapbox usa Longitud, Latitud.
-  List<Position> coordenadas = puntosBackend
+  List<Position> coordenadas = tracePointList
       .map((p) => Position(p.lon, p.lat)) // Ojo al orden
       .toList();
 
