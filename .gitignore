@@ -266,8 +266,8 @@ iOSInjectionProject/
 launch.json
 
 #python scripts
-*.py
-scripts/venv
+# *.py
+# scripts/venv
 
 #dstore
 *.DStore
