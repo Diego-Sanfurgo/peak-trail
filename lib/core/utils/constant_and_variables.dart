@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peak_trail/core/environment/env.dart';
 
 class AppUtil {
   static final GlobalKey<ScaffoldMessengerState> scaffoldKey =
@@ -24,4 +25,7 @@ class MapConstants {
   static const String trackingSourceID = "tracking-source";
   static const String trackingLayerID = "tracking-layer";
   static const String trackingFeatureID = "tracking-feature";
+
+  static const String mountainAreaSourceURL =
+      "${Environment.supabaseURL}/functions/v1/mountain_areas_tiles/{z}/{x}/{y}";
 }

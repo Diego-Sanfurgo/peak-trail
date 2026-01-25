@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -20,6 +21,7 @@ import 'package:peak_trail/data/repositories/map_repository.dart';
 import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
 
 import 'package:peak_trail/data/providers/tracking_database.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -47,6 +49,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       Permission.locationWhenInUse,
     ].request();
     log(statuses.toString());
+
     add(MapReload());
   }
 
@@ -57,23 +60,89 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(enabled: true, puckBearingEnabled: true),
     );
 
-    await Future.wait([
-      LayerService.addPointLayers(
-        _controller!,
-        await _mapRepo.getPeaksJson(asString: true),
-        MapConstants.peakID,
-      ),
-      LayerService.addPointLayers(
-        _controller!,
-        await _mapRepo.getWaterfallJson(),
-        MapConstants.waterfallID,
-      ),
-      LayerService.addPointLayers(
-        _controller!,
-        await _mapRepo.getPassJson(),
-        MapConstants.mountainPassID,
-      ),
-    ]);
+    await LayerService.addMountainAreaAll(_controller!);
+
+    // final supabase = Supabase.instance.client;
+
+    // final List<FileObject> layers = await supabase.storage
+    //     .from('map_layers')
+    //     .list(path: 'points/poi.geojson');
+
+    // for (var layer in layers) {
+    //   try {
+    //     if (layer.name == '.emptyFolderPlaceholder') continue;
+
+    //     log('Downloading layer: ${layer.name}');
+    //     final Uint8List bytes = await supabase.storage
+    //         .from('map_layers')
+    //         .download(layer.name);
+
+    //     final String geoJson = utf8.decode(bytes);
+    //     final Map<String, dynamic> data = jsonDecode(geoJson);
+
+    //     final String sourceId = layer.name
+    //         .replaceAll('.geojson', '')
+    //         .replaceAll('.json', '');
+
+    //     // Determine geometry type
+    //     String? geometryType;
+    //     final type = data['type'];
+    //     if (type == 'FeatureCollection') {
+    //       final List features = data['features'];
+    //       if (features.isNotEmpty) {
+    //         geometryType = features[0]['geometry']['type'];
+    //       }
+    //     } else if (type == 'Feature') {
+    //       geometryType = data['geometry']?['type'];
+    //     }
+
+    //     if (geometryType != null) {
+    //       log('Layer ${layer.name} type: $geometryType');
+    //       if (geometryType.contains('Polygon')) {
+    //         await LayerService.addPolygonLayers(
+    //           _controller!,
+    //           geoJson,
+    //           sourceId,
+    //         );
+    //       } else if (geometryType.contains('Point')) {
+    //         final sourceIdFinal = sourceId.contains('cerro')
+    //             ? MapConstants.peakID
+    //             : sourceId.contains('cascada')
+    //             ? MapConstants.waterfallID
+    //             : sourceId.contains('portezuelo')
+    //             ? MapConstants.mountainPassID
+    //             : sourceId;
+    //         LayerService.addPointLayers(_controller!, geoJson, sourceIdFinal);
+    //       } else if (geometryType.contains('LineString')) {
+    //         await LayerService.addPolygonLayers(
+    //           _controller!,
+    //           geoJson,
+    //           sourceId,
+    //         );
+    //       }
+    //     }
+    //   } catch (e) {
+    //     log('Error processing layer ${layer.name}: $e');
+    //   }
+    // }
+
+    // await Future.wait([
+    //   LayerService.addPointLayers(
+    //     _controller!,
+    //     await _mapRepo.getPeaksJson(asString: true),
+    //     MapConstants.peakID,
+    //   ),
+    //   LayerService.addPointLayers(
+    //     _controller!,
+    //     await _mapRepo.getWaterfallJson(),
+    //     MapConstants.waterfallID,
+    //   ),
+    //   LayerService.addPointLayers(
+    //     _controller!,
+    //     await _mapRepo.getPassJson(),
+    //     MapConstants.mountainPassID,
+    //   ),
+    // ]);
 
     final tapStream = addOnMapTapListener(_controller!, [
       MapConstants.peakID,

@@ -16,4 +16,8 @@ class Environment {
     'SUPABASE_PUBLISHABLE',
     defaultValue: '',
   );
+  static const String supabaseProject = String.fromEnvironment(
+    'SUPABASE_PROJECT',
+    defaultValue: '',
+  );
 }

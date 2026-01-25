@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:peak_trail/core/utils/constant_and_variables.dart';
 
 import 'image_service.dart';
 
@@ -233,6 +234,52 @@ class LayerService {
     } catch (e) {
       log("❌ Error adding image $imageName: $e");
     }
+  }
+
+  static Future<void> addMountainAreaAll(MapboxMap controller) async {
+    // Asegúrate que tu URL termina exactamente así en MapConstants:
+    // ".../mvt-mountains/{z}/{x}/{y}" (sin parámetros extra si usas --no-verify-jwt)
+
+    const String sourceId = "mountains-mvt-source";
+    const String layerId = "mountains-fill-layer";
+
+    // 1. Añadir Fuente (Corrigiendo 'url' por 'tiles')
+    await controller.style.addSource(
+      VectorSource(
+        id: sourceId,
+        tiles: [
+          MapConstants.mountainAreaSourceURL,
+        ], // Correcto: Lista de templates
+        minzoom: 5, // Ajustado para que coincida con el zoom inicial de tu mapa
+        maxzoom: 22,
+      ),
+    );
+
+    // Elimina el CircleLayer y añade esto temporalmente:
+    await controller.style.addLayer(
+      LineLayer(
+        id: "debug-lines",
+        sourceId: sourceId,
+        sourceLayer: "mountain_areas_tiles",
+        lineColor: Colors.red.toARGB32(), // Rojo fuerte
+        lineWidth: 3.0, // Línea gruesa para verla fácil
+        lineOpacity: 1.0,
+      ),
+    );
+
+    // 2. Añadir Capa
+    await controller.style.addLayer(
+      FillLayer(
+        id: layerId,
+        sourceId: sourceId,
+        sourceLayer:
+            "mountain_areas_tiles", // Debe coincidir con el string en tu SQL ST_AsMVT
+        fillColor: Colors.green
+            .toARGB32(), // Mapbox Flutter v2 usa int (ARGB) estándar
+        fillOpacity: 0.4,
+        fillOutlineColor: Colors.green[900]!.toARGB32(),
+      ),
+    );
   }
 }
 
