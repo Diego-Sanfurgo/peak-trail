@@ -60,7 +60,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(enabled: true, puckBearingEnabled: true),
     );
 
-    await LayerService.addMountainAreaAll(_controller!);
+    // await LayerService.addMountainAreaAll(_controller!);
+    await LayerService.addPlacesSource(_controller!);
 
     // final supabase = Supabase.instance.client;
 
@@ -144,30 +145,30 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     //   ),
     // ]);
 
-    final tapStream = addOnMapTapListener(_controller!, [
-      MapConstants.peakID,
-      MapConstants.waterfallID,
-      MapConstants.mountainPassID,
-    ]);
+    // final tapStream = addOnMapTapListener(_controller!, [
+    //   MapConstants.peakID,
+    //   MapConstants.waterfallID,
+    //   MapConstants.mountainPassID,
+    // ]);
 
-    tapStream.listen((selectedFeature) async {
-      if (_selectedFeatureDTO.featureId.isNotEmpty) {
-        await _controller!.setFeatureState(
-          _selectedFeatureDTO.sourceID,
-          null,
-          _selectedFeatureDTO.featureId,
-          jsonEncode({'selected': false}),
-        );
-      }
+    // tapStream.listen((selectedFeature) async {
+    //   if (_selectedFeatureDTO.featureId.isNotEmpty) {
+    //     await _controller!.setFeatureState(
+    //       _selectedFeatureDTO.sourceID,
+    //       null,
+    //       _selectedFeatureDTO.featureId,
+    //       jsonEncode({'selected': false}),
+    //     );
+    //   }
 
-      await _controller!.setFeatureState(
-        selectedFeature.sourceID,
-        null,
-        selectedFeature.featureId,
-        jsonEncode({'selected': true}),
-      );
-      _selectedFeatureDTO = selectedFeature;
-    });
+    //   await _controller!.setFeatureState(
+    //     selectedFeature.sourceID,
+    //     null,
+    //     selectedFeature.featureId,
+    //     jsonEncode({'selected': true}),
+    //   );
+    //   _selectedFeatureDTO = selectedFeature;
+    // });
 
     emit(MapStatus(isLoading: false, mountains: []));
     add(MapMoveCamera());

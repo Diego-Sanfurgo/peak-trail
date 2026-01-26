@@ -25,7 +25,9 @@ class MapConstants {
   static const String trackingSourceID = "tracking-source";
   static const String trackingLayerID = "tracking-layer";
   static const String trackingFeatureID = "tracking-feature";
+  static const _supabaseFunctions = "${Environment.supabaseURL}/functions/v1/";
 
-  static const String mountainAreaSourceURL =
-      "${Environment.supabaseURL}/functions/v1/mountain_areas_tiles/{z}/{x}/{y}";
+  static const String mountainAreasMVT =
+      "${_supabaseFunctions}mvt_peak_areas/{z}/{x}/{y}";
+  static const String placesMVT = "${_supabaseFunctions}mvt_places/{z}/{x}/{y}";
 }

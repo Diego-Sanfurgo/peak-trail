@@ -6,6 +6,77 @@ import 'package:peak_trail/core/utils/constant_and_variables.dart';
 import 'image_service.dart';
 
 class LayerService {
+  static Future<void> addPlacesSource(MapboxMap mapboxMap) async {
+    if (!await _ensureStyleIsLoaded(mapboxMap)) return;
+
+    const String sourceID = 'places-source';
+    const String layerID = 'places-layer';
+
+    // 1. Fuente
+    // Verificar si ya existe para evitar errores en Hot Reload
+    if (!await mapboxMap.style.styleSourceExists(sourceID)) {
+      await mapboxMap.style.addSource(
+        VectorSource(
+          id: sourceID,
+          tiles: [MapConstants.placesMVT],
+          minzoom: 5,
+          maxzoom: 40,
+        ),
+      );
+    }
+    // En addPlacesSource
+
+    // 2. Agregar Capa con lógica de Cluster
+    await mapboxMap.style.addLayer(
+      CircleLayer(
+        id: "places-layer",
+        sourceId: sourceID,
+        sourceLayer: "places",
+        // Radio variable: Si count > 1 (Cluster) es más grande
+        circleRadiusExpression: [
+          "case",
+          [
+            ">",
+            ["get", "point_count"],
+            1,
+          ],
+          18.0, // Radio Cluster
+          6.0, // Radio Punto individual
+        ],
+        // Color variable: Naranja si es cluster, Azul si es punto (ejemplo)
+        circleColorExpression: [
+          "case",
+          [
+            ">",
+            ["get", "point_count"],
+            1,
+          ],
+          "#FF9800",
+          "#467DFF",
+        ],
+        circleStrokeWidth: 2.0,
+        circleStrokeColor: Colors.white.toARGB32(),
+      ),
+    );
+
+    // 3. (Opcional) Agregar Texto con el conteo
+    await mapboxMap.style.addLayer(
+      SymbolLayer(
+        id: "places-count-layer",
+        sourceId: sourceID,
+        sourceLayer: "places",
+        // Solo mostrar texto si es cluster
+        filter: [">", "point_count", 1],
+        textFieldExpression: [
+          "to-string",
+          ["get", "point_count"],
+        ],
+        textSize: 12.0,
+        textColor: Colors.white.toARGB32(),
+      ),
+    );
+  }
+
   static Future<void> addPointLayers(
     MapboxMap controller,
     String geoJson,
@@ -125,49 +196,6 @@ class LayerService {
     }
   }
 
-  static Future<void> addPolygonLayers(
-    MapboxMap controller,
-    String geoJson,
-    String sourceBaseID,
-  ) async {
-    final String sourceID = '$sourceBaseID-source';
-
-    if (!await _ensureStyleIsLoaded(controller)) return;
-
-    // Add Source
-    if (!await controller.style.styleSourceExists(sourceID)) {
-      await controller.style.addSource(
-        GeoJsonSource(id: sourceID, data: geoJson, cluster: false),
-      );
-    }
-
-    // Fill Layer
-    final String fillLayerID = '$sourceBaseID-fill';
-    if (!await controller.style.styleLayerExists(fillLayerID)) {
-      await controller.style.addLayer(
-        FillLayer(
-          id: fillLayerID,
-          sourceId: sourceID,
-          fillColor: Colors.blue.withValues(alpha: 0.3).toARGB32(),
-          fillOutlineColor: Colors.blue.withValues(alpha: 0.8).toARGB32(),
-        ),
-      );
-    }
-
-    // Line Layer
-    final String lineLayerID = '$sourceBaseID-line';
-    if (!await controller.style.styleLayerExists(lineLayerID)) {
-      await controller.style.addLayer(
-        LineLayer(
-          id: lineLayerID,
-          sourceId: sourceID,
-          lineColor: Colors.blue.toARGB32(),
-          lineWidth: 1.5,
-        ),
-      );
-    }
-  }
-
   static Future<void> addTrackingLayer(
     MapboxMap controller,
     String geoJson,
@@ -247,22 +275,19 @@ class LayerService {
     await controller.style.addSource(
       VectorSource(
         id: sourceId,
-        tiles: [
-          MapConstants.mountainAreaSourceURL,
-        ], // Correcto: Lista de templates
+        tiles: [MapConstants.mountainAreasMVT], // Correcto: Lista de templates
         minzoom: 5, // Ajustado para que coincida con el zoom inicial de tu mapa
         maxzoom: 22,
       ),
     );
 
-    // Elimina el CircleLayer y añade esto temporalmente:
     await controller.style.addLayer(
       LineLayer(
         id: "debug-lines",
         sourceId: sourceId,
         sourceLayer: "mountain_areas_tiles",
-        lineColor: Colors.red.toARGB32(), // Rojo fuerte
-        lineWidth: 3.0, // Línea gruesa para verla fácil
+        lineColor: Colors.black.toARGB32(), // Rojo fuerte
+        lineWidth: .05, // Línea gruesa para verla fácil
         lineOpacity: 1.0,
       ),
     );
@@ -274,8 +299,8 @@ class LayerService {
         sourceId: sourceId,
         sourceLayer:
             "mountain_areas_tiles", // Debe coincidir con el string en tu SQL ST_AsMVT
-        fillColor: Colors.green
-            .toARGB32(), // Mapbox Flutter v2 usa int (ARGB) estándar
+        fillColor: Colors.blue.toARGB32(),
+        // fillColor: Colors.green.toARGB32(),
         fillOpacity: 0.4,
         fillOutlineColor: Colors.green[900]!.toARGB32(),
       ),
