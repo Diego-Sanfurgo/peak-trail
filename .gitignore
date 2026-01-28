@@ -271,4 +271,5 @@ launch.json
 
 #dstore
 *.DStore
+*.DS_Store
 

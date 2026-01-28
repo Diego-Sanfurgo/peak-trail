@@ -10,9 +10,14 @@ class LayerService {
     if (!await _ensureStyleIsLoaded(mapboxMap)) return;
 
     const String sourceID = 'places-source';
-    const String layerID = 'places-layer';
 
-    // 1. Fuente
+    // 1. Cargar imágenes para cada tipo de punto
+    const List<String> placeTypes = ['lake', 'pass', 'peak', 'waterfall'];
+    for (final String type in placeTypes) {
+      await addPlaceImageToStyle(mapboxMap, type);
+    }
+
+    // 2. Fuente
     // Verificar si ya existe para evitar errores en Hot Reload
     if (!await mapboxMap.style.styleSourceExists(sourceID)) {
       await mapboxMap.style.addSource(
@@ -24,141 +29,81 @@ class LayerService {
         ),
       );
     }
-    // En addPlacesSource
 
-    // 2. Agregar Capa con lógica de Cluster
-    await mapboxMap.style.addLayer(
-      CircleLayer(
-        id: "places-layer",
-        sourceId: sourceID,
-        sourceLayer: "places",
-        // Radio variable: Si count > 1 (Cluster) es más grande
-        circleRadiusExpression: [
-          "case",
-          [
-            ">",
-            ["get", "point_count"],
-            1,
-          ],
-          18.0, // Radio Cluster
-          6.0, // Radio Punto individual
-        ],
-        // Color variable: Naranja si es cluster, Azul si es punto (ejemplo)
-        circleColorExpression: [
-          "case",
-          [
-            ">",
-            ["get", "point_count"],
-            1,
-          ],
-          "#FF9800",
-          "#467DFF",
-        ],
-        circleStrokeWidth: 2.0,
-        circleStrokeColor: Colors.white.toARGB32(),
-      ),
-    );
+    const String clusterLayerID = 'places-cluster';
+    const String countLayerID = 'places-count';
+    const String pointsLayerID = 'places-points';
 
-    // 3. (Opcional) Agregar Texto con el conteo
-    await mapboxMap.style.addLayer(
-      SymbolLayer(
-        id: "places-count-layer",
-        sourceId: sourceID,
-        sourceLayer: "places",
-        // Solo mostrar texto si es cluster
-        filter: [">", "point_count", 1],
-        textFieldExpression: [
-          "to-string",
-          ["get", "point_count"],
-        ],
-        textSize: 12.0,
-        textColor: Colors.white.toARGB32(),
-      ),
-    );
-  }
-
-  static Future<void> addPointLayers(
-    MapboxMap controller,
-    String geoJson,
-    String sourceBaseID,
-  ) async {
-    final String sourceID = '$sourceBaseID-source';
-    final bool isPeak = sourceBaseID.contains('peak');
-    final bool isPass = sourceBaseID.contains('pass');
-    final bool isWaterfall = sourceBaseID.contains('waterfall');
-    // Add Image first so it's ready for the layers
-    await addImageToStyle(controller, sourceBaseID);
-
-    final int circleClusterColor = switch (true) {
-      _ when isPeak => Colors.black38.toARGB32(),
-      _ when isPass => Colors.green.withValues(alpha: 0.6).toARGB32(),
-      _ when isWaterfall => Colors.purple.withValues(alpha: 0.6).toARGB32(),
-      _ => Colors.black38.toARGB32(),
-    };
-
-    // Add Source
-    if (!await controller.style.styleSourceExists(sourceID)) {
-      await controller.style.addSource(
-        GeoJsonSource(
-          id: sourceID,
-          data: geoJson,
-          cluster: true,
-          clusterMaxZoom: 16,
-          clusterRadius: 100,
-          clusterMinPoints: 4,
-        ),
-      );
-    }
-
-    // Cluster layer
-    final String clusterLayerID = '$sourceBaseID-cluster';
-    if (!await controller.style.styleLayerExists(clusterLayerID)) {
-      await controller.style.addLayer(
+    // 3. Agregar Capa con lógica de Cluster
+    if (!await mapboxMap.style.styleLayerExists(clusterLayerID)) {
+      await mapboxMap.style.addLayer(
         CircleLayer(
           id: clusterLayerID,
           sourceId: sourceID,
-          filter: ["has", "point_count"],
-          circleColor: circleClusterColor,
-          circleRadius: 20,
+          sourceLayer: "places",
+          filter: [
+            ">",
+            ["get", "point_count"],
+            1,
+          ],
+          circleRadius: 18.0,
+          circleColor: Colors.orange.toARGB32(),
+          circleStrokeWidth: 2.0,
           circleStrokeColor: Colors.white.toARGB32(),
-          circleStrokeWidth: 2,
         ),
       );
     }
 
-    // Cluster count text
-    final String countLayerID = '$sourceBaseID-count';
-    if (!await controller.style.styleLayerExists(countLayerID)) {
-      await controller.style.addLayer(
+    // 4. Agregar Texto con el conteo del cluster
+    if (!await mapboxMap.style.styleLayerExists(countLayerID)) {
+      await mapboxMap.style.addLayer(
         SymbolLayer(
           id: countLayerID,
           sourceId: sourceID,
-          filter: ["has", "point_count"],
-          textColor: Colors.white.toARGB32(),
+          sourceLayer: "places",
+          filter: [
+            ">",
+            ["get", "point_count"],
+            1,
+          ],
+          textFieldExpression: [
+            "to-string",
+            ["get", "point_count"],
+          ],
           textSize: 12.0,
+          textColor: Colors.white.toARGB32(),
           textIgnorePlacement: true,
           textAllowOverlap: true,
         ),
       );
-      // Use setStyleLayerProperty for expression-based text field as SymbolLayer constructor only accepts String?
-      await controller.style.setStyleLayerProperty(countLayerID, 'text-field', [
-        "get",
-        "point_count",
-      ]);
     }
 
-    // Individual Points Layer
-    final String unclusteredLayerID = '$sourceBaseID-points';
-    if (!await controller.style.styleLayerExists(unclusteredLayerID)) {
-      await controller.style.addLayer(
+    // 5. Agregar SymbolLayer para puntos individuales
+    if (!await mapboxMap.style.styleLayerExists(pointsLayerID)) {
+      await mapboxMap.style.addLayer(
         SymbolLayer(
-          id: unclusteredLayerID,
+          id: pointsLayerID,
           sourceId: sourceID,
+          sourceLayer: "places",
+          // Filtro inverso al cluster: muestra puntos donde point_count NO es > 1
           filter: [
             "!",
-            ["has", "point_count"],
+            [
+              ">",
+              [
+                "coalesce",
+                ["get", "point_count"],
+                0,
+              ],
+              1,
+            ],
           ],
-          iconImage: '$sourceBaseID-marker',
+          // Icono dinámico basado en el tipo de punto
+          iconImageExpression: [
+            "concat",
+            ["get", "type"],
+            "-marker",
+          ],
           iconSize: 0.4,
           iconHaloColor: Colors.white.toARGB32(),
           iconHaloWidth: 2,
@@ -169,6 +114,7 @@ class LayerService {
           textHaloWidth: 1.5,
           iconAllowOverlap: true,
           iconIgnorePlacement: true,
+          // feature-state:selected para gestionar interacciones
           iconSizeExpression: [
             "case",
             [
@@ -182,17 +128,19 @@ class LayerService {
         ),
       );
 
-      // Dynamic text field based on source type
-      await controller.style.setStyleLayerProperty(
-        unclusteredLayerID,
-        'text-field',
+      // Texto dinámico: nombre + altura (si existe)
+      await mapboxMap.style.setStyleLayerProperty(pointsLayerID, 'text-field', [
+        "case",
+        ["has", "alt"],
         [
           "concat",
-          isPeak ? ["get", "name"] : ["get", "fna"],
+          ["get", "name"],
           "\n",
           ["get", "alt"],
+          "m",
         ],
-      );
+        ["get", "name"],
+      ]);
     }
   }
 
@@ -228,20 +176,20 @@ class LayerService {
     }
   }
 
-  static Future<void> addImageToStyle(
+  /// Carga una imagen para un tipo de lugar específico (lake, pass, peak, waterfall)
+  static Future<void> addPlaceImageToStyle(
     MapboxMap controller,
-    String sourceBaseID,
+    String placeType,
   ) async {
-    final String imageName = '$sourceBaseID-marker';
+    final String imageName = '$placeType-marker';
 
     try {
       if (await controller.style.hasStyleImage(imageName)) return;
 
-      // // Ensure style is loaded before adding images
       if (!await _ensureStyleIsLoaded(controller)) return;
 
       final SizedImage imageBytes = await ImageService.loadSizedImage(
-        _getAssetPath(sourceBaseID),
+        _getAssetPath(placeType),
       );
 
       await controller.style.addStyleImage(
@@ -258,9 +206,9 @@ class LayerService {
         null,
       );
 
-      log("✅ Image added to style: $imageName");
+      log("✅ Place image added to style: $imageName");
     } catch (e) {
-      log("❌ Error adding image $imageName: $e");
+      log("❌ Error adding place image $imageName: $e");
     }
   }
 
