@@ -9,6 +9,7 @@ import 'package:peak_trail/data/models/place.dart';
 import 'package:peak_trail/data/providers/place_provider.dart';
 import 'package:peak_trail/data/repositories/place_repository.dart';
 import 'package:peak_trail/features/home/bloc/map_bloc.dart';
+import 'package:peak_trail/widgets/animated_search_text.dart';
 
 import 'cubit/search_bar_cubit.dart';
 
@@ -48,18 +49,24 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: <Widget>[
-        SliverAppBar(
-          leading: BackButton(onPressed: () => NavigationService.pop()),
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.filter_alt_outlined)),
-          ],
-          titleSpacing: 0,
-          title: _SearchBarWidget(),
-          pinned: true,
-          // floating: true,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.green),
-            borderRadius: BorderRadiusGeometry.circular(30),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverAppBar(
+            leading: BackButton(onPressed: () => NavigationService.pop()),
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.filter_alt_outlined),
+              ),
+            ],
+            titleSpacing: 0,
+            title: _SearchBarWidget(),
+            pinned: true,
+            // floating: true,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Colors.green),
+              borderRadius: BorderRadiusGeometry.circular(30),
+            ),
           ),
         ),
 
@@ -147,7 +154,7 @@ class _SearchBarWidgetState extends State<_SearchBarWidget> {
       child: TextFormField(
         autofocus: true,
         decoration: InputDecoration(
-          hintText: 'Buscar lugares...',
+          hint: AnimatedSearchText(),
           border: InputBorder.none,
         ),
         controller: _controller,

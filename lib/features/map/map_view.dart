@@ -90,7 +90,7 @@ class _BodyState extends State<_Body> {
           right: 16,
           child: FloatingActionButton.small(
             heroTag: Key("layer_FAB"),
-            child: Icon(Icons.layers_rounded),
+            child: Icon(Icons.layers_outlined),
             onPressed: () {},
           ),
         ),

@@ -60,12 +60,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // await LayerService.addMountainAreaAll(_controller!);
     await LayerService.addPlacesSource(_controller!);
 
-    final tapStream = addOnMapTapListener(_controller!, [
-      // MapConstants.peakID,
-      // MapConstants.waterfallID,
-      // MapConstants.mountainPassID,
-      'places',
-    ]);
+    final tapStream = addOnMapTapListener(_controller!, ['places']);
 
     tapStream.listen((selectedFeature) async {
       if (_selectedFeatureDTO.featureId.isNotEmpty) {

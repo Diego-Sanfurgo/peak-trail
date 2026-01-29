@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peak_trail/widgets/animated_search_text.dart';
 
 class MockedSearchBar extends StatelessWidget {
   const MockedSearchBar({super.key});
@@ -16,10 +17,7 @@ class MockedSearchBar extends StatelessWidget {
         children: [
           const Icon(Icons.search_rounded),
           const SizedBox(width: 8),
-          Text(
-            'Buscar montañas',
-            style: TextStyle(color: Colors.grey[600], fontSize: 16),
-          ),
+          AnimatedSearchText(),
         ],
       ),
     );
