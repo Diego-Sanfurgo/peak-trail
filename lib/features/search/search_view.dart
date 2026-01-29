@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:peak_trail/core/services/navigation_service.dart';
-import 'package:peak_trail/data/models/peak.dart';
-import 'package:peak_trail/data/providers/peak_provider.dart';
-import 'package:peak_trail/data/repositories/peak_repository.dart';
+import 'package:peak_trail/data/models/place.dart';
+
+import 'package:peak_trail/data/providers/place_provider.dart';
+import 'package:peak_trail/data/repositories/place_repository.dart';
 import 'package:peak_trail/features/home/bloc/map_bloc.dart';
 
 import 'cubit/search_bar_cubit.dart';
@@ -17,11 +18,101 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) => PeakRepository(PeakProvider()),
+      create: (context) => PlaceRepository(PlaceProvider()),
       child: BlocProvider(
-        create: (context) => SearchBarCubit(context.read<PeakRepository>()),
-        child: _SearchBarWidget(),
+        create: (context) => SearchBarCubit(context.read<PlaceRepository>()),
+        child: _SearchViewWidget(),
       ),
+    );
+  }
+}
+
+class _SearchViewWidget extends StatefulWidget {
+  const _SearchViewWidget();
+
+  @override
+  State<_SearchViewWidget> createState() => _SearchViewWidgetState();
+}
+
+class _SearchViewWidgetState extends State<_SearchViewWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: SafeArea(child: _Body()));
+  }
+}
+
+class _Body extends StatelessWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+          leading: BackButton(onPressed: () => NavigationService.pop()),
+          actions: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.filter_alt_outlined)),
+          ],
+          titleSpacing: 0,
+          title: _SearchBarWidget(),
+          pinned: true,
+          // floating: true,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.green),
+            borderRadius: BorderRadiusGeometry.circular(30),
+          ),
+        ),
+
+        BlocBuilder<SearchBarCubit, SearchBarState>(
+          builder: (context, state) {
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverList.builder(
+                itemCount: state.places.length,
+                itemBuilder: (context, index) {
+                  Place place = state.places.elementAt(index);
+                  final String? subtitle =
+                      place.districtName != null && place.stateName != null
+                      ? '${place.districtName}, ${place.stateName}'
+                      : place.districtName ?? place.stateName;
+
+                  final IconData icon = switch (place.type) {
+                    PlaceType.peak => Icons.volcano_outlined,
+                    PlaceType.lake => Icons.water_outlined,
+                    PlaceType.pass => Icons.terrain_outlined,
+                    PlaceType.waterfall => Icons.water_drop_outlined,
+                  };
+
+                  return ListTile(
+                    title: Text(place.name),
+                    subtitle: subtitle != null
+                        ? Text(
+                            subtitle,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          )
+                        : null,
+                    leading: Icon(icon),
+                    trailing: Icon(Icons.arrow_right),
+                    tileColor: Colors.white,
+                    onTap: () {
+                      NavigationService.pop();
+                      BlocProvider.of<MapBloc>(context).add(
+                        MapMoveCamera(
+                          targetLocation: LatLng(
+                            place.geom.coordinates.latitude,
+                            place.geom.coordinates.longitude,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -30,10 +121,10 @@ class _SearchBarWidget extends StatefulWidget {
   const _SearchBarWidget();
 
   @override
-  State<_SearchBarWidget> createState() => __SearchBarWidgetState();
+  State<_SearchBarWidget> createState() => _SearchBarWidgetState();
 }
 
-class __SearchBarWidgetState extends State<_SearchBarWidget> {
+class _SearchBarWidgetState extends State<_SearchBarWidget> {
   late final TextEditingController _controller;
   late final SearchBarCubit _cubit;
   @override
@@ -51,55 +142,17 @@ class __SearchBarWidgetState extends State<_SearchBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SearchBar(
-                leading: BackButton(onPressed: () => NavigationService.pop()),
-                autoFocus: true,
-                controller: _controller,
-                onChanged: (value) => _cubit.queryPeaks(value),
-              ),
-            ),
-            BlocBuilder<SearchBarCubit, SearchBarState>(
-              builder: (context, state) {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: state.mountains.length,
-                    itemBuilder: (context, index) {
-                      Peak mountain = state.mountains[index];
-                      return ListTile(
-                        title: Text(mountain.properties.name),
-                        subtitle: Text(
-                          state.mountains
-                              .elementAt(index)
-                              .geometry
-                              .coordinates
-                              .toString(),
-                        ),
-                        onTap: () {
-                          NavigationService.pop();
-                          BlocProvider.of<MapBloc>(context).add(
-                            MapMoveCamera(
-                              targetLocation: LatLng(
-                                mountain.geometry.coordinates.latitude,
-                                mountain.geometry.coordinates.longitude,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-            // Additional UI elements can be added here
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(right: 16),
+      child: TextFormField(
+        autofocus: true,
+        decoration: InputDecoration(
+          hintText: 'Buscar lugares...',
+          border: InputBorder.none,
         ),
+        controller: _controller,
+        onChanged: (value) => _cubit.queryPeaks(value),
+        // elevation: WidgetStateProperty.all(0),
       ),
     );
   }

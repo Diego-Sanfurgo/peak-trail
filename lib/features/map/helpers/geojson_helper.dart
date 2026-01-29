@@ -1,10 +1,10 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/data/models/base_point.dart';
+import 'package:peak_trail/data/models/place.dart';
 
 class GeoJsonHelper {
   /// 1. Filtra las features dentro del BBox.
   /// 2. Mapea las features resultantes a objetos HikingPoint.
-  static List<BasePoint> filterAndMapFeatures({
+  static List<PlaceGeometry> filterAndMapFeatures({
     required Map<String, dynamic> geoJson,
     required CoordinateBounds bounds,
   }) {
@@ -18,7 +18,7 @@ class GeoJsonHelper {
     final double minLng = bounds.southwest.coordinates.lng.toDouble();
     final double maxLng = bounds.northeast.coordinates.lng.toDouble();
 
-    final List<BasePoint> visiblePoints = [];
+    final List<PlaceGeometry> visiblePoints = [];
 
     for (final feature in features) {
       final geometry = feature['geometry'];
@@ -36,12 +36,7 @@ class GeoJsonHelper {
           // Asumo que tu feature tiene properties con un 'id' y 'name'
           final properties = feature['properties'] ?? {};
 
-          visiblePoints.add(
-            BasePoint(
-              geometry: BaseGeometry.fromJson(properties),
-              properties: BaseProperties.fromJson(properties),
-            ),
-          );
+          visiblePoints.add(PlaceGeometry.fromJson(properties));
         }
       }
     }

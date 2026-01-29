@@ -2,7 +2,7 @@ import 'dart:async'; // Necesario para StreamController
 
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:peak_trail/core/utils/normalize_map.dart';
-import 'package:peak_trail/data/models/base_point.dart';
+import 'package:peak_trail/data/models/place.dart';
 import 'package:peak_trail/features/home/dto/selected_feature_dto.dart';
 
 Stream<SelectedFeatureDTO> addOnMapTapListener(
@@ -45,10 +45,10 @@ Stream<SelectedFeatureDTO> addOnMapTapListener(
       // zoom = double.parse(featureZoom.value ?? '14.5');
     }
 
-    final BaseGeometry baseGeometry = BaseGeometry.fromFeature(rawFeature);
+    final PlaceGeometry geometry = PlaceGeometry.fromFeature(rawFeature);
 
     await controller.easeTo(
-      CameraOptions(center: baseGeometry.toMapboxPoint(), zoom: zoom),
+      CameraOptions(center: geometry.toMapboxPoint(), zoom: zoom),
       MapAnimationOptions(duration: 500),
     );
 

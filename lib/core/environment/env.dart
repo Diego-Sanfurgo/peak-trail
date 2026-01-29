@@ -4,10 +4,6 @@ class Environment {
     defaultValue: '',
   );
 
-  static const String supabaseSecret = String.fromEnvironment(
-    'SUPABASE_SECRET',
-    defaultValue: '',
-  );
   static const String supabaseURL = String.fromEnvironment(
     'SUPABASE_URL',
     defaultValue: '',

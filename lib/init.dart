@@ -10,7 +10,7 @@ Future<void> initApp() async {
   await Future.wait([
     Supabase.initialize(
       url: Environment.supabaseURL,
-      anonKey: Environment.supabaseSecret,
+      anonKey: Environment.supabasePublishable,
     ),
 
     LocationService.instance.init(),

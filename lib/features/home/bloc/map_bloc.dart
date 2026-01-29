@@ -7,13 +7,13 @@ import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:equatable/equatable.dart';
 import 'package:peak_trail/core/services/layer_service.dart';
+import 'package:peak_trail/data/models/place.dart';
 import 'package:peak_trail/features/home/dto/selected_feature_dto.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:peak_trail/core/services/location_service.dart';
 
-import 'package:peak_trail/data/models/peak.dart';
 import 'package:peak_trail/data/repositories/map_repository.dart';
 
 import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
@@ -86,7 +86,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _selectedFeatureDTO = selectedFeature;
     });
 
-    emit(MapStatus(isLoading: false, mountains: []));
+    emit(MapStatus(isLoading: false, places: []));
     add(MapMoveCamera());
   }
 

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:go_router/go_router.dart';
-import 'package:peak_trail/data/providers/lake_provider.dart';
-import 'package:peak_trail/data/providers/pass_provider.dart';
-import 'package:peak_trail/data/providers/peak_provider.dart';
-import 'package:peak_trail/data/providers/waterfall_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peak_trail/data/providers/place_provider.dart';
 import 'package:peak_trail/data/repositories/map_repository.dart';
 import 'bloc/map_bloc.dart';
 
@@ -27,12 +25,7 @@ class HomeShellView extends StatelessWidget {
     // Corrección para evitar error de contexto si usas routerState dentro del create:
     // Es más seguro instanciar el Bloc sin depender tanto del GoRouterState inmediato si es posible.
     return RepositoryProvider(
-      create: (context) => TrackingMapRepository(
-        PeakProvider(),
-        WaterfallProvider(),
-        MountainPassProvider(),
-        LakeProvider(),
-      ),
+      create: (context) => TrackingMapRepository(PlaceProvider()),
       child: BlocProvider(
         create: (context) =>
             MapBloc(mapRepository: context.read<TrackingMapRepository>()),

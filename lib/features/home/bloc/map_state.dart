@@ -2,21 +2,21 @@ part of 'map_bloc.dart';
 
 @immutable
 sealed class MapState extends Equatable {
-  final List<Peak> mountains;
-  const MapState({this.mountains = const []});
+  final List<Place> places;
+  const MapState({this.places = const []});
 }
 
 class MapStatus extends MapState {
   final bool isLoading;
-  const MapStatus({this.isLoading = false, super.mountains = const []});
+  const MapStatus({this.isLoading = false, super.places = const []});
 
-  MapStatus copyWith({bool? isLoading, List<Peak>? mountains}) {
+  MapStatus copyWith({bool? isLoading, List<Place>? places}) {
     return MapStatus(
       isLoading: isLoading ?? this.isLoading,
-      mountains: mountains ?? this.mountains,
+      places: places ?? this.places,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, mountains];
+  List<Object?> get props => [isLoading, places];
 }
