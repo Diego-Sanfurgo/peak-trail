@@ -12,7 +12,7 @@ class AnimatedSearchText extends StatefulWidget {
 
 class _AnimatedSearchTextState extends State<AnimatedSearchText>
     with SingleTickerProviderStateMixin {
-  static const List<String> _searchTerms = [
+  static const List<String> searchTerms = [
     'montañas',
     'lagos',
     'portezuelos',
@@ -23,54 +23,54 @@ class _AnimatedSearchTextState extends State<AnimatedSearchText>
   ];
   final textStyle = TextStyle(color: Colors.grey[600], fontSize: 16);
 
-  late AnimationController _controller;
-  late Animation<Offset> _slideOutAnimation;
-  late Animation<Offset> _slideInAnimation;
-  late Animation<double> _fadeOutAnimation;
-  late Animation<double> _fadeInAnimation;
+  late AnimationController controller;
+  late Animation<Offset> slideOutAnimation;
+  late Animation<Offset> slideInAnimation;
+  late Animation<double> fadeOutAnimation;
+  late Animation<double> fadeInAnimation;
 
   Timer? _timer;
-  int _currentIndex = Random().nextInt(_searchTerms.length);
-  int _nextIndex = Random().nextInt(_searchTerms.length);
-  bool _isAnimating = false;
+  int currentIndex = Random().nextInt(searchTerms.length);
+  int nextIndex = Random().nextInt(searchTerms.length);
+  bool isAnimating = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
     // Animación de salida: de centro hacia arriba
-    _slideOutAnimation = Tween<Offset>(
+    slideOutAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(0, -1),
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
 
     // Animación de entrada: de abajo hacia centro
-    _slideInAnimation = Tween<Offset>(
+    slideInAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
 
     // Fade animations
-    _fadeOutAnimation = Tween<double>(
+    fadeOutAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-    _fadeInAnimation = Tween<double>(
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
+    fadeInAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
 
-    _controller.addStatusListener((status) {
+    controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
-          _currentIndex = _nextIndex;
-          _isAnimating = false;
+          currentIndex = nextIndex;
+          isAnimating = false;
         });
-        _controller.reset();
+        controller.reset();
       }
     });
 
@@ -84,18 +84,18 @@ class _AnimatedSearchTextState extends State<AnimatedSearchText>
   }
 
   void _animateToNext() {
-    if (_isAnimating) return;
+    if (isAnimating) return;
     setState(() {
-      _isAnimating = true;
-      _nextIndex = (_currentIndex + 1) % _searchTerms.length;
+      isAnimating = true;
+      nextIndex = (currentIndex + 1) % searchTerms.length;
     });
-    _controller.forward();
+    controller.forward();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -113,23 +113,23 @@ class _AnimatedSearchTextState extends State<AnimatedSearchText>
               children: [
                 // Texto actual (sale hacia arriba)
                 SlideTransition(
-                  position: _isAnimating
-                      ? _slideOutAnimation
+                  position: isAnimating
+                      ? slideOutAnimation
                       : const AlwaysStoppedAnimation(Offset.zero),
                   child: FadeTransition(
-                    opacity: _isAnimating
-                        ? _fadeOutAnimation
+                    opacity: isAnimating
+                        ? fadeOutAnimation
                         : const AlwaysStoppedAnimation(1.0),
-                    child: Text(_searchTerms[_currentIndex], style: textStyle),
+                    child: Text(searchTerms[currentIndex], style: textStyle),
                   ),
                 ),
                 // Texto nuevo (entra desde abajo)
-                if (_isAnimating)
+                if (isAnimating)
                   SlideTransition(
-                    position: _slideInAnimation,
+                    position: slideInAnimation,
                     child: FadeTransition(
-                      opacity: _fadeInAnimation,
-                      child: Text(_searchTerms[_nextIndex], style: textStyle),
+                      opacity: fadeInAnimation,
+                      child: Text(searchTerms[nextIndex], style: textStyle),
                     ),
                   ),
               ],
