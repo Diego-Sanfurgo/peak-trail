@@ -194,13 +194,13 @@ class LayerService {
 
       await controller.style.addStyleImage(
         imageName,
-        1,
+        1.2,
         MbxImage(
           width: imageBytes.width,
           height: imageBytes.height,
           data: imageBytes.data,
         ),
-        true,
+        false,
         [],
         [],
         null,
@@ -261,10 +261,14 @@ String _getAssetPath(String sourceBaseID) {
     case 'waterfall':
       return AppAssets.WATERFALL_PIN;
     case 'peak':
-      return AppAssets.MOUNTAIN_PIN;
+      return AppAssets.PEAK_PIN;
     case 'pass':
-      return AppAssets.MOUNTAIN_PASS_PIN;
+      return AppAssets.BRIDGE_PIN;
     case 'lake':
+      return AppAssets.LAKE_PIN;
+    case 'park':
+      return AppAssets.PARK_PIN;
+    case 'volcano':
       return AppAssets.VOLCANO_PIN;
     default:
       throw ArgumentError('Unsupported sourceBaseID: $sourceBaseID');

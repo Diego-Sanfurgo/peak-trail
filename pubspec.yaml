@@ -33,7 +33,7 @@ dependencies:
   #utils
   http: ^1.6.0
   path: ^1.9.1
-  image: ^4.7.2
+  # image: ^4.7.2
   meta: ^1.16.0
   path_provider: ^2.1.5
 
@@ -67,7 +67,6 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/data/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
