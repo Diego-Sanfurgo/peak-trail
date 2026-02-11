@@ -79,9 +79,10 @@ class _Body extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Place place = state.places.elementAt(index);
                   final String? subtitle =
-                      place.districtName != null && place.stateName != null
-                      ? '${place.districtName}, ${place.stateName}'
-                      : place.districtName ?? place.stateName;
+                      place.simpleDistrictName != null &&
+                          place.simpleStateName != null
+                      ? '${place.simpleDistrictName}, ${place.simpleStateName}'
+                      : place.simpleDistrictName ?? place.simpleStateName;
 
                   final IconData icon = switch (place.type) {
                     PlaceType.peak => Icons.volcano_outlined,
@@ -101,7 +102,6 @@ class _Body extends StatelessWidget {
                         : null,
                     leading: Icon(icon),
                     trailing: Icon(Icons.arrow_right),
-                    tileColor: Colors.white,
                     onTap: () {
                       NavigationService.pop();
                       BlocProvider.of<MapBloc>(context).add(

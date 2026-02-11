@@ -78,6 +78,35 @@ class Place {
     protectedAreaName: protectedAreaName ?? this.protectedAreaName,
   );
 
+  String? get simpleStateName {
+    if (stateName == null) return null;
+    return _simplifyName(stateName!);
+  }
+
+  String? get simpleDistrictName {
+    if (districtName == null) return null;
+    return _simplifyName(districtName!);
+  }
+
+  String _simplifyName(String name) {
+    const targets = [
+      "Departamento de",
+      "Departamento",
+      "Partido de",
+      "Partido",
+      "Provincia del",
+      "Provincia de",
+      "Provincia",
+    ];
+
+    for (final target in targets) {
+      if (name.contains(target)) {
+        return name.substring(name.indexOf(target) + target.length).trim();
+      }
+    }
+    return name;
+  }
+
   factory Place.fromJson(Map<String, dynamic> json) => Place(
     id: json["id"],
     name: json["name"],
