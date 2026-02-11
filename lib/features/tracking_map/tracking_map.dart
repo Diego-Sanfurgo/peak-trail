@@ -95,6 +95,7 @@ class _BottomSheetLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SafeArea(
       child: DraggableScrollableSheet(
         initialChildSize: 0.15,
@@ -102,8 +103,8 @@ class _BottomSheetLayer extends StatelessWidget {
         maxChildSize: 1.0,
         builder: (context, scrollController) {
           return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: SingleChildScrollView(

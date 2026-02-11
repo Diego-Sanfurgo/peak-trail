@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:action_slider/action_slider.dart';
+import 'package:peak_trail/core/theme/colors.dart';
 
 import 'package:peak_trail/features/tracking_map/bloc/tracking_map_bloc.dart';
 
@@ -100,15 +101,17 @@ class _StandardSliderBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ActionSlider.standard(
       key: const Key('standard'),
       controller: standardController,
       height: constraints.maxHeight,
       sliderBehavior: SliderBehavior.stretch,
-      successIcon: const Icon(Icons.flag_outlined, color: Colors.white),
+      successIcon: const Icon(Icons.flag_outlined),
       loadingIcon: _loadingIcon,
       failureIcon: const Icon(Icons.error, color: Colors.red),
-      icon: const Icon(Icons.chevron_right_outlined, color: Colors.white),
+      icon: Icon(Icons.chevron_right_outlined, color: colorScheme.onPrimary),
+      toggleColor: colorScheme.primary,
       customOuterBackgroundBuilder: (context, sliderState, child) =>
           _CustomOuterBackgroundBuilder(),
       action: (controller) =>
@@ -125,13 +128,15 @@ class _DualSliderBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ActionSlider.dual(
       key: const Key('dual'),
       controller: dualController,
       height: constraints.maxHeight,
       loadingIcon: _loadingIcon,
       sliderBehavior: SliderBehavior.stretch,
-      icon: const Icon(Icons.sync_alt_outlined, color: Colors.white),
+      icon: Icon(Icons.sync_alt_outlined, color: colorScheme.onPrimary),
+      toggleColor: colorScheme.primary,
       customOuterBackgroundBuilder: (context, sliderState, child) =>
           _CustomOuterBackgroundBuilder(),
       startChild: const Text("Terminar"),
@@ -158,10 +163,6 @@ class _PausedBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(
-          Colors.green.withValues(alpha: 0.1),
-        ),
-        foregroundColor: const WidgetStatePropertyAll(Colors.black),
         fixedSize: WidgetStatePropertyAll(
           Size.fromHeight(constraints.maxHeight),
         ),
@@ -179,11 +180,12 @@ class _CustomOuterBackgroundBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        color: Colors.green.withValues(alpha: 0.1),
-        border: Border.all(color: Colors.black),
+        color: colorScheme.surfaceBright,
+        border: Border.all(color: colorScheme.primary),
       ),
     );
   }

@@ -55,7 +55,6 @@ class _MetricItem extends StatelessWidget {
           style: TextStyle(
             fontSize: isPrimary ? 18 : 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
           ),
         ),
         Text(

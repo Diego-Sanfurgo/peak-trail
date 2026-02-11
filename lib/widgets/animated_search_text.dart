@@ -21,7 +21,6 @@ class _AnimatedSearchTextState extends State<AnimatedSearchText>
     'lagunas',
     'volcanes',
   ];
-  final textStyle = TextStyle(color: Colors.grey[600], fontSize: 16);
 
   late AnimationController controller;
   late Animation<Offset> slideOutAnimation;
@@ -37,6 +36,7 @@ class _AnimatedSearchTextState extends State<AnimatedSearchText>
   @override
   void initState() {
     super.initState();
+
     controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -101,6 +101,9 @@ class _AnimatedSearchTextState extends State<AnimatedSearchText>
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = Theme.of(
+      context,
+    ).textTheme.labelMedium!.copyWith(fontSize: 16);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
