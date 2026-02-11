@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:action_slider/action_slider.dart';
-import 'package:peak_trail/core/theme/colors.dart';
 
 import 'package:peak_trail/features/tracking_map/bloc/tracking_map_bloc.dart';
 
@@ -184,7 +183,7 @@ class _CustomOuterBackgroundBuilder extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        color: colorScheme.surfaceBright,
+        color: colorScheme.surface,
         border: Border.all(color: colorScheme.primary),
       ),
     );
