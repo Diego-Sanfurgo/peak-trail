@@ -1,6 +1,6 @@
-package com.example.peak_trail
+package app.saltamontes
 
-import com.example.peak_trail.TrackingPointEntity
+import app.saltamontes.TrackingPointEntity
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

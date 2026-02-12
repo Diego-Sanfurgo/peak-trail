@@ -1,4 +1,4 @@
-package com.example.peak_trail
+package app.saltamontes
 
 import android.content.Context
 import androidx.room.Database

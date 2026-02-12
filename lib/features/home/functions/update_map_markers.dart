@@ -1,5 +1,5 @@
 // import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-// import 'package:peak_trail/data/models/base_point.dart';
+// import 'package:saltamontes/data/models/base_point.dart';
 
 // // Variable de estado en tu clase (State o Controller)
 // // Key: ID de tu BasePoint (ej. "cerro_123")

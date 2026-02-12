@@ -9,7 +9,7 @@ import Flutter
   ) -> Bool {
       
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-    let locationChannel = FlutterMethodChannel(name: "com.tuapp.hiking/location",
+    let locationChannel = FlutterMethodChannel(name: "app.saltamontes/location",
                                               binaryMessenger: controller.binaryMessenger)
     
     locationChannel.setMethodCallHandler({

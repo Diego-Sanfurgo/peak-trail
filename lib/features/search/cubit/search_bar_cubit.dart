@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:peak_trail/data/models/place.dart';
-import 'package:peak_trail/data/repositories/place_repository.dart';
+import 'package:saltamontes/data/models/place.dart';
+import 'package:saltamontes/data/repositories/place_repository.dart';
 
 part 'search_bar_state.dart';
 

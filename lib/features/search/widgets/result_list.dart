@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:peak_trail/data/models/place.dart';
-import 'package:peak_trail/core/services/navigation_service.dart';
+import 'package:saltamontes/data/models/place.dart';
+import 'package:saltamontes/core/services/navigation_service.dart';
 
-import 'package:peak_trail/features/home/bloc/map_bloc.dart';
+import 'package:saltamontes/features/home/bloc/map_bloc.dart';
 
 class ResultList extends StatelessWidget {
   const ResultList({super.key, required this.places});

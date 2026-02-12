@@ -6,11 +6,11 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/core/services/layer_service.dart';
-import 'package:peak_trail/core/services/location_service.dart';
-import 'package:peak_trail/core/services/trace_service.dart';
-import 'package:peak_trail/core/utils/constant_and_variables.dart';
-import 'package:peak_trail/data/repositories/tracking_map_repository.dart';
+import 'package:saltamontes/core/services/layer_service.dart';
+import 'package:saltamontes/core/services/location_service.dart';
+import 'package:saltamontes/core/services/trace_service.dart';
+import 'package:saltamontes/core/utils/constant_and_variables.dart';
+import 'package:saltamontes/data/repositories/tracking_map_repository.dart';
 
 import '../functions/add_tracking_polyline.dart';
 

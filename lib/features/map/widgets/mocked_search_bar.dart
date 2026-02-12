@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:peak_trail/core/theme/colors.dart';
-import 'package:peak_trail/widgets/animated_search_text.dart';
+import 'package:saltamontes/core/theme/colors.dart';
+import 'package:saltamontes/widgets/animated_search_text.dart';
 
 class MockedSearchBar extends StatelessWidget {
   const MockedSearchBar({super.key});

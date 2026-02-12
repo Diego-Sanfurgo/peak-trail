@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 
-import 'package:peak_trail/data/providers/tracking_database.dart';
+import 'package:saltamontes/data/providers/tracking_database.dart';
 
-import 'package:peak_trail/data/repositories/tracking_map_repository.dart';
-import 'package:peak_trail/features/tracking_map/bloc/tracking_map_bloc.dart';
-import 'package:peak_trail/features/tracking_map/widgets/actions_list.dart';
-import 'package:peak_trail/features/tracking_map/widgets/metrics_grid.dart';
+import 'package:saltamontes/data/repositories/tracking_map_repository.dart';
+import 'package:saltamontes/features/tracking_map/bloc/tracking_map_bloc.dart';
+import 'package:saltamontes/features/tracking_map/widgets/actions_list.dart';
+import 'package:saltamontes/features/tracking_map/widgets/metrics_grid.dart';
 
 import 'widgets/animated_action_btn.dart';
 

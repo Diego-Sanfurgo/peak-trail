@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:peak_trail/core/theme/theme.dart';
-import 'package:peak_trail/core/router/app_router.dart';
-import 'package:peak_trail/data/providers/settings_provider.dart';
-import 'package:peak_trail/data/repositories/settings_repository.dart';
-import 'package:peak_trail/features/settings/bloc/settings_bloc.dart';
+import 'package:saltamontes/core/theme/theme.dart';
+import 'package:saltamontes/core/router/app_router.dart';
+import 'package:saltamontes/data/providers/settings_provider.dart';
+import 'package:saltamontes/data/repositories/settings_repository.dart';
+import 'package:saltamontes/features/settings/bloc/settings_bloc.dart';
 
 import 'core/utils/constant_and_variables.dart';
 
-import 'package:peak_trail/init.dart';
+import 'package:saltamontes/init.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

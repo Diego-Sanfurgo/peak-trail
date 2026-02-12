@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:peak_trail/features/settings/bloc/settings_bloc.dart';
+import 'package:saltamontes/features/settings/bloc/settings_bloc.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});

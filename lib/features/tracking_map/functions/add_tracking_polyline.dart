@@ -1,6 +1,6 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/data/models/trace_point.dart';
-import 'package:peak_trail/core/utils/constant_and_variables.dart';
+import 'package:saltamontes/data/models/trace_point.dart';
+import 'package:saltamontes/core/utils/constant_and_variables.dart';
 
 Future<void> updateMapTrack(
   List<TracePoint> tracePointList,

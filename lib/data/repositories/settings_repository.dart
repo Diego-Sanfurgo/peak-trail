@@ -1,4 +1,4 @@
-import 'package:peak_trail/data/providers/settings_provider.dart';
+import 'package:saltamontes/data/providers/settings_provider.dart';
 
 class SettingsRepository {
   final SettingsProvider _settingsProvider;

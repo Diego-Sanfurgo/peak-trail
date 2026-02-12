@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 
-import 'package:peak_trail/core/utils/constant_and_variables.dart';
-import 'package:peak_trail/features/tracking_map/tracking_map.dart';
+import 'package:saltamontes/core/utils/constant_and_variables.dart';
+import 'package:saltamontes/features/tracking_map/tracking_map.dart';
 
 import 'route_widgets_export.dart';
 

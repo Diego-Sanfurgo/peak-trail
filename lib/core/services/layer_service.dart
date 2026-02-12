@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/core/utils/constant_and_variables.dart';
+import 'package:saltamontes/core/utils/constant_and_variables.dart';
 
 import 'image_service.dart';
 

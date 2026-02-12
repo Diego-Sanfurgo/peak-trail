@@ -1,5 +1,5 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/data/models/place.dart';
+import 'package:saltamontes/data/models/place.dart';
 
 class GeoJsonHelper {
   /// 1. Filtra las features dentro del BBox.

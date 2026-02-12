@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:peak_trail/core/utils/normalize_map.dart';
+import 'package:saltamontes/core/utils/normalize_map.dart';
 
 BaseMultiPoligon baseMultiPoligonFromJson(String str) =>
     BaseMultiPoligon.fromJson(json.decode(str));

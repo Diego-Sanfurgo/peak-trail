@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:action_slider/action_slider.dart';
 
-import 'package:peak_trail/features/tracking_map/bloc/tracking_map_bloc.dart';
+import 'package:saltamontes/features/tracking_map/bloc/tracking_map_bloc.dart';
 
 class AnimatedActionBtn extends StatefulWidget {
   const AnimatedActionBtn({super.key});

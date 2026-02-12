@@ -6,19 +6,19 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:equatable/equatable.dart';
-import 'package:peak_trail/core/services/layer_service.dart';
-import 'package:peak_trail/data/models/place.dart';
-import 'package:peak_trail/features/home/dto/selected_feature_dto.dart';
+import 'package:saltamontes/core/services/layer_service.dart';
+import 'package:saltamontes/data/models/place.dart';
+import 'package:saltamontes/features/home/dto/selected_feature_dto.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-import 'package:peak_trail/core/services/location_service.dart';
+import 'package:saltamontes/core/services/location_service.dart';
 
-import 'package:peak_trail/data/repositories/map_repository.dart';
+import 'package:saltamontes/data/repositories/map_repository.dart';
 
-import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
+import 'package:saltamontes/features/home/functions/on_map_tap_listener.dart';
 
-import 'package:peak_trail/data/providers/tracking_database.dart';
+import 'package:saltamontes/data/providers/tracking_database.dart';
 
 import '../functions/filter_mountain_areas.dart';
 

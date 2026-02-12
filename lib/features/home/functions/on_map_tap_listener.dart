@@ -1,9 +1,9 @@
 import 'dart:async'; // Necesario para StreamController
 
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/core/utils/normalize_map.dart';
-import 'package:peak_trail/data/models/place.dart';
-import 'package:peak_trail/features/home/dto/selected_feature_dto.dart';
+import 'package:saltamontes/core/utils/normalize_map.dart';
+import 'package:saltamontes/data/models/place.dart';
+import 'package:saltamontes/features/home/dto/selected_feature_dto.dart';
 
 Stream<SelectedFeatureDTO> addOnMapTapListener(
   MapboxMap controller,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:peak_trail/core/environment/env.dart';
+import 'package:saltamontes/core/environment/env.dart';
 
 class AppUtil {
   static final GlobalKey<ScaffoldMessengerState> scaffoldKey =

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:peak_trail/main.dart';
-import 'package:peak_trail/data/repositories/settings_repository.dart';
-import 'package:peak_trail/data/providers/settings_provider.dart';
+import 'package:saltamontes/main.dart';
+import 'package:saltamontes/data/repositories/settings_repository.dart';
+import 'package:saltamontes/data/providers/settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

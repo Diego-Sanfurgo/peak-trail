@@ -1,5 +1,5 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:peak_trail/core/services/location_service.dart';
+import 'package:saltamontes/core/services/location_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/environment/env.dart';

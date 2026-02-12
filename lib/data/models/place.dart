@@ -8,7 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mb;
 
-import 'package:peak_trail/core/utils/normalize_map.dart';
+import 'package:saltamontes/core/utils/normalize_map.dart';
 
 Place placeFromJson(String str) => Place.fromJson(json.decode(str));
 

@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:peak_trail/data/repositories/settings_repository.dart';
+import 'package:saltamontes/data/repositories/settings_repository.dart';
 
 part 'settings_event.dart';
 part 'settings_state.dart';

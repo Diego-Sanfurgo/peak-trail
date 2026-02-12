@@ -1,4 +1,4 @@
-package com.example.peak_trail
+package app.saltamontes
 
 import androidx.room.Dao
 import androidx.room.Insert

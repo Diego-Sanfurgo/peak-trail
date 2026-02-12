@@ -1,4 +1,4 @@
-package com.example.peak_trail
+package app.saltamontes
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

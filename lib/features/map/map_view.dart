@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-import 'package:peak_trail/core/services/navigation_service.dart';
-import 'package:peak_trail/features/map/widgets/mocked_search_bar.dart';
+import 'package:saltamontes/core/services/navigation_service.dart';
+import 'package:saltamontes/features/map/widgets/mocked_search_bar.dart';
 
 import '../home/bloc/map_bloc.dart';
 import 'widgets/floating_chips.dart';

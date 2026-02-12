@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:peak_trail/data/providers/place_provider.dart';
-import 'package:peak_trail/data/repositories/map_repository.dart';
+import 'package:saltamontes/data/providers/place_provider.dart';
+import 'package:saltamontes/data/repositories/map_repository.dart';
 import 'bloc/map_bloc.dart';
 
 class HomeShellView extends StatelessWidget {

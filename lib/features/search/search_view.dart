@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:peak_trail/core/services/navigation_service.dart';
+import 'package:saltamontes/core/services/navigation_service.dart';
 
-import 'package:peak_trail/data/providers/place_provider.dart';
-import 'package:peak_trail/data/repositories/place_repository.dart';
-import 'package:peak_trail/features/search/widgets/result_list.dart';
-import 'package:peak_trail/widgets/animated_search_text.dart';
+import 'package:saltamontes/data/providers/place_provider.dart';
+import 'package:saltamontes/data/repositories/place_repository.dart';
+import 'package:saltamontes/features/search/widgets/result_list.dart';
+import 'package:saltamontes/widgets/animated_search_text.dart';
 
 import 'cubit/search_bar_cubit.dart';
 

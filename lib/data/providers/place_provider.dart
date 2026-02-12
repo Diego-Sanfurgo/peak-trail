@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:peak_trail/data/models/place.dart';
+import 'package:saltamontes/data/models/place.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PlaceProvider {

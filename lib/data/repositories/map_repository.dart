@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:peak_trail/data/models/place.dart';
-import 'package:peak_trail/data/providers/place_provider.dart';
+import 'package:saltamontes/data/models/place.dart';
+import 'package:saltamontes/data/providers/place_provider.dart';
 
 class TrackingMapRepository {
   TrackingMapRepository(this._placeProvider);

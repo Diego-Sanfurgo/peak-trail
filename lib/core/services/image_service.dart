@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
-export 'package:peak_trail/core/theme/app_assets.dart';
+export 'package:saltamontes/core/theme/app_assets.dart';
 
 class ImageService {
   static Future<Uint8List> loadImage(String imagePath) async {

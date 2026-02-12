@@ -1,12 +1,12 @@
 // trace_service.dart
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:peak_trail/data/models/trace_point.dart';
-import 'package:peak_trail/data/providers/tracking_database.dart';
+import 'package:saltamontes/data/models/trace_point.dart';
+import 'package:saltamontes/data/providers/tracking_database.dart';
 
 class TraceService {
   // Correct channel name from MainActivity.kt
-  static const _platform = MethodChannel('com.example.peak_trail/location');
+  static const _platform = MethodChannel('app.saltamontes/location');
 
   final TrackingDatabase _db;
 

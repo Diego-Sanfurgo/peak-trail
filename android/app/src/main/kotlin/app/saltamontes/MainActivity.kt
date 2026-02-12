@@ -1,4 +1,4 @@
-package com.example.peak_trail
+package app.saltamontes
 
 import android.content.Intent
 import androidx.annotation.NonNull
@@ -7,7 +7,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "com.example.peak_trail/location"
+    private val CHANNEL = "app.saltamontes/location"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
