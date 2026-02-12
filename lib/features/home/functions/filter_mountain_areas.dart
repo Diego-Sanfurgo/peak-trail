@@ -20,7 +20,7 @@ Future<void> filterUserMountains(
         ["literal", userPeakIds], // Lista de IDs desde Dart
       ],
       // Cambiar color para indicar que es un filtro activo
-      "fillColor": "#4285F4",
+      "fill-color": "#729B79",
     }),
   );
 }
@@ -33,7 +33,7 @@ Future<void> resetFilter(MapboxMap controller) async {
       // Elimina el filtro, muestra todo
       "filter": ["all"],
       // Cambiar color para indicar que es un filtro activo
-      "fillColor": "#34A853",
+      "fill-color": "#34A853",
     }),
   );
 }

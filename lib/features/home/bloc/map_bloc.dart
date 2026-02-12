@@ -20,6 +20,8 @@ import 'package:peak_trail/features/home/functions/on_map_tap_listener.dart';
 
 import 'package:peak_trail/data/providers/tracking_database.dart';
 
+import '../functions/filter_mountain_areas.dart';
+
 part 'map_event.dart';
 part 'map_state.dart';
 
@@ -57,7 +59,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(enabled: true, puckBearingEnabled: true),
     );
 
-    // await LayerService.addMountainAreaAll(_controller!);
+    await LayerService.addMountainAreaAll(_controller!);
     await LayerService.addPlacesSource(_controller!);
 
     final tapStream = addOnMapTapListener(_controller!, ['places']);
@@ -70,6 +72,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _selectedFeatureDTO.featureId,
           jsonEncode({'selected': false}),
         );
+
+        if (_selectedFeatureDTO.type == 'peak') {
+          // await LayerService.addMountainAreaAll(_controller!);
+          await filterUserMountains(_controller!, [
+            _selectedFeatureDTO.featureId,
+          ]);
+        }
       }
 
       await _controller!.setFeatureState(

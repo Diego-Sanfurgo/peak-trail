@@ -56,11 +56,10 @@ Stream<SelectedFeatureDTO> addOnMapTapListener(
 
     streamController.add(
       SelectedFeatureDTO(
-        featureId: isCluster
-            ? ''
-            : normalizedMap['properties']['id'] ?? normalizedMap['id'],
+        featureId: isCluster ? '' : normalizedMap['properties']['id'],
         isCluster: isCluster,
         sourceID: sourceIDSelected,
+        type: normalizedMap['properties']['type'],
       ),
     );
   });
