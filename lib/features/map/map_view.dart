@@ -1,13 +1,15 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+
 import 'package:peak_trail/core/services/navigation_service.dart';
 import 'package:peak_trail/features/map/widgets/mocked_search_bar.dart';
 
 import '../home/bloc/map_bloc.dart';
+import 'widgets/floating_chips.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
@@ -97,14 +99,23 @@ class _BodyState extends State<_Body> {
 
         Positioned(
           top: 16,
-          left: 16,
-          right: 16,
-          child: GestureDetector(
-            onTap: () => NavigationService.go(
-              Routes.SEARCH,
-              actualUri: GoRouterState.of(context).uri,
-            ),
-            child: MockedSearchBar(),
+          left: 0,
+          right: 0,
+          child: Column(
+            spacing: 8,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GestureDetector(
+                  onTap: () => NavigationService.go(
+                    Routes.SEARCH,
+                    actualUri: GoRouterState.of(context).uri,
+                  ),
+                  child: MockedSearchBar(),
+                ),
+              ),
+              FloatingChips(),
+            ],
           ),
         ),
       ],

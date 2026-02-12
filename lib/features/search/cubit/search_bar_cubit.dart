@@ -8,27 +8,27 @@ import 'package:peak_trail/data/repositories/place_repository.dart';
 part 'search_bar_state.dart';
 
 class SearchBarCubit extends Cubit<SearchBarState> {
-  SearchBarCubit(this._placeRepository) : super(SearchBarStatus()) {
-    _init();
+  SearchBarCubit(this._placeRepository) : super(SearchBarState()) {
+    // _init();
   }
 
   final PlaceRepository _placeRepository;
 
-  Future<void> _init() async {
-    // final String jsonData = await _mountainsRepository.getPeaksJson();
-    // _jsonPeaks.addAll(
-    //   jsonDecode(jsonData)['features'].cast<Map<String, dynamic>>(),
-    // );
-  }
+  // Future<void> _init() async {
+  //   // final String jsonData = await _mountainsRepository.getPeaksJson();
+  //   // _jsonPeaks.addAll(
+  //   //   jsonDecode(jsonData)['features'].cast<Map<String, dynamic>>(),
+  //   // );
+  // }
 
   Future<void> queryPeaks(String query) async {
     try {
       if (query.isEmpty) {
-        emit(SearchBarStatus());
+        emit(SearchBarState());
         return;
       }
 
-      emit(SearchBarStatus(isLoading: true));
+      emit(SearchBarState(status: SearchBarStatus.loading));
 
       final String normalizedQuery = _normalize(query);
 
@@ -37,9 +37,10 @@ class SearchBarCubit extends Cubit<SearchBarState> {
         isLimited: false,
       );
 
-      emit(SearchBarStatus(places: places));
+      emit(SearchBarState(status: SearchBarStatus.success, places: places));
     } on Exception catch (e, stack) {
       log(e.toString(), stackTrace: stack);
+      emit(SearchBarState(status: SearchBarStatus.failure));
     }
   }
 }

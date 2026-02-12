@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peak_trail/core/theme/colors.dart';
 import 'package:peak_trail/widgets/animated_search_text.dart';
 
 class MockedSearchBar extends StatelessWidget {
@@ -15,9 +16,15 @@ class MockedSearchBar extends StatelessWidget {
         border: Border.all(color: colorScheme.outline),
       ),
       child: Row(
+        spacing: 8,
         children: [
-          const Icon(Icons.search_rounded),
-          const SizedBox(width: 8),
+          Icon(
+            Icons.search_rounded,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppColors.darkPrimaryColor
+                : AppColors.lightTextColor,
+          ),
+
           AnimatedSearchText(),
         ],
       ),

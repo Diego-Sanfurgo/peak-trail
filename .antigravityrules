@@ -1,0 +1,1 @@
+"Para este proyecto (Peak Trail), tienes acceso al servidor MCP supabase-peak-trail. Utilízalo exclusivamente para consultar el esquema geo_core y public, verificar políticas RLS y validar las funciones RPC de PostGIS antes de sugerir cambios en el código Dart o SQL."

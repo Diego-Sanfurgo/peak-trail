@@ -1,14 +1,22 @@
 part of 'search_bar_cubit.dart';
 
-sealed class SearchBarState extends Equatable {
-  const SearchBarState({this.isLoading = false, this.places = const {}});
-  final bool isLoading;
+enum SearchBarStatus { initial, loading, success, failure }
+
+class SearchBarState extends Equatable {
+  const SearchBarState({
+    this.status = SearchBarStatus.initial,
+    this.places = const {},
+  });
+  final SearchBarStatus status;
   final Set<Place> places;
 
-  @override
-  List<Object> get props => [isLoading, places];
-}
+  SearchBarState copyWith({SearchBarStatus? status, Set<Place>? places}) {
+    return SearchBarState(
+      status: status ?? this.status,
+      places: places ?? this.places,
+    );
+  }
 
-class SearchBarStatus extends SearchBarState {
-  const SearchBarStatus({super.isLoading, super.places});
+  @override
+  List<Object> get props => [status, places];
 }
