@@ -27,8 +27,7 @@ class HomeShellView extends StatelessWidget {
     return RepositoryProvider(
       create: (context) => TrackingMapRepository(PlaceProvider()),
       child: BlocProvider(
-        create: (context) =>
-            MapBloc(mapRepository: context.read<TrackingMapRepository>()),
+        create: (context) => MapBloc(),
         child: Scaffold(
           // El body es el navigationShell mismo.
           // GoRouter se encarga de usar un IndexedStack internamente.

@@ -254,6 +254,22 @@ class LayerService {
       ),
     );
   }
+
+  /// Removes an overlay by removing its [layerIds] first, then the [sourceId].
+  static Future<void> removeOverlay(
+    MapboxMap controller,
+    String sourceId,
+    List<String> layerIds,
+  ) async {
+    for (final layerId in layerIds) {
+      if (await controller.style.styleLayerExists(layerId)) {
+        await controller.style.removeStyleLayer(layerId);
+      }
+    }
+    if (await controller.style.styleSourceExists(sourceId)) {
+      await controller.style.removeStyleSource(sourceId);
+    }
+  }
 }
 
 String _getAssetPath(String sourceBaseID) {

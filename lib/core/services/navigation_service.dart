@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../utils/constant_and_variables.dart';
 
 class NavigationService {
-  static void pop() {
-    AppUtil.navigatorContext.pop();
+  static void pop<T extends Object?>([T? result]) {
+    AppUtil.navigatorContext.pop(result);
   }
 
   static void go(

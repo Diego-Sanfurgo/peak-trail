@@ -35,3 +35,21 @@ class MapMoveCamera extends MapEvent {
   @override
   List<Object?> get props => [zoomLevel, targetLocation];
 }
+
+class MapChangeStyle extends MapEvent {
+  MapChangeStyle(this.styleUri);
+
+  final String styleUri;
+
+  @override
+  List<Object?> get props => [styleUri];
+}
+
+class MapToggleOverlay extends MapEvent {
+  MapToggleOverlay(this.overlayId);
+
+  final String overlayId;
+
+  @override
+  List<Object?> get props => [overlayId];
+}

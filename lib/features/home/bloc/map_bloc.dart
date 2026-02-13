@@ -14,8 +14,6 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'package:saltamontes/core/services/location_service.dart';
 
-import 'package:saltamontes/data/repositories/map_repository.dart';
-
 import 'package:saltamontes/features/home/functions/on_map_tap_listener.dart';
 
 import 'package:saltamontes/data/providers/tracking_database.dart';
@@ -26,18 +24,17 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapBloc({required TrackingMapRepository mapRepository})
-    : _mapRepo = mapRepository,
-      super(MapStatus(isLoading: true)) {
+  MapBloc() : super(const MapState(status: MapStatus.loading)) {
     _init();
     on<MapCreated>(_onCreated);
     on<MapReload>(_onReload);
     on<MapCameraIdle>(_onCameraIdle);
     on<MapMoveCamera>(_onMoveCamera);
+    on<MapChangeStyle>(_onChangeStyle);
+    on<MapToggleOverlay>(_onToggleOverlay);
   }
 
   MapboxMap? _controller;
-  final TrackingMapRepository _mapRepo;
   final LocationService _locationService = LocationService.instance;
   SelectedFeatureDTO _selectedFeatureDTO = SelectedFeatureDTO.empty();
 
@@ -59,7 +56,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       LocationComponentSettings(enabled: true, puckBearingEnabled: true),
     );
 
-    await LayerService.addMountainAreaAll(_controller!);
     await LayerService.addPlacesSource(_controller!);
 
     final tapStream = addOnMapTapListener(_controller!, ['places']);
@@ -90,12 +86,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _selectedFeatureDTO = selectedFeature;
     });
 
-    emit(MapStatus(isLoading: false, places: []));
+    emit(state.copyWith(status: MapStatus.loaded, places: []));
     add(MapMoveCamera());
   }
 
   Future<void> _onReload(MapReload event, Emitter<MapState> emit) async {
-    emit(MapStatus(isLoading: false));
+    emit(state.copyWith(status: MapStatus.initial));
   }
 
   Future<void> _onCameraIdle(
@@ -140,6 +136,66 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       ),
       MapAnimationOptions(duration: 500),
     );
+  }
+
+  Future<void> _onChangeStyle(
+    MapChangeStyle event,
+    Emitter<MapState> emit,
+  ) async {
+    if (_controller == null) return;
+    await _controller!.loadStyleURI(event.styleUri);
+
+    // Re-add base layers after style change
+    await LayerService.addPlacesSource(_controller!);
+
+    // Re-add active overlays
+    for (final overlayId in state.activeOverlays) {
+      await _addOverlayById(overlayId);
+    }
+
+    emit(state.copyWith(styleUri: event.styleUri));
+  }
+
+  Future<void> _onToggleOverlay(
+    MapToggleOverlay event,
+    Emitter<MapState> emit,
+  ) async {
+    if (_controller == null) return;
+
+    final overlays = Set<String>.from(state.activeOverlays);
+
+    if (overlays.contains(event.overlayId)) {
+      // Disable: remove from set and remove layers
+      overlays.remove(event.overlayId);
+      await _removeOverlayById(event.overlayId);
+    } else {
+      // Enable: add to set and add layers
+      overlays.add(event.overlayId);
+      await _addOverlayById(event.overlayId);
+    }
+
+    emit(state.copyWith(activeOverlays: overlays));
+  }
+
+  Future<void> _addOverlayById(String overlayId) async {
+    switch (overlayId) {
+      case 'mountains-mvt-source':
+        await LayerService.addMountainAreaAll(_controller!);
+      default:
+        log('Unknown overlay: $overlayId');
+    }
+  }
+
+  Future<void> _removeOverlayById(String overlayId) async {
+    switch (overlayId) {
+      case 'mountains-mvt-source':
+        await LayerService.removeOverlay(_controller!, 'mountains-mvt-source', [
+          'mountains-fill-layer',
+          'debug-lines',
+        ]);
+      default:
+        log('Unknown overlay: $overlayId');
+    }
   }
 }
 

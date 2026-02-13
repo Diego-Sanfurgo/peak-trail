@@ -10,6 +10,7 @@ import 'package:saltamontes/features/map/widgets/mocked_search_bar.dart';
 
 import '../home/bloc/map_bloc.dart';
 import 'widgets/floating_chips.dart';
+import 'widgets/map_style_selector.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
@@ -72,10 +73,10 @@ class _BodyState extends State<_Body> {
           child: Column(
             spacing: 8,
             children: [
-              FloatingActionButton(
-                heroTag: Key("tracking_FAB"),
-                child: Icon(Icons.play_circle_outlined),
-                onPressed: () => NavigationService.go(Routes.TRACKING_MAP),
+              FloatingActionButton.small(
+                heroTag: Key("layer_FAB"),
+                child: Icon(Icons.layers_outlined),
+                onPressed: () => showMapStyleSelector(context),
               ),
               FloatingActionButton(
                 heroTag: Key("location_FAB"),
@@ -84,16 +85,6 @@ class _BodyState extends State<_Body> {
                     BlocProvider.of<MapBloc>(context).add(MapMoveCamera()),
               ),
             ],
-          ),
-        ),
-
-        Positioned(
-          top: 84,
-          right: 16,
-          child: FloatingActionButton.small(
-            heroTag: Key("layer_FAB"),
-            child: Icon(Icons.layers_outlined),
-            onPressed: () {},
           ),
         ),
 
@@ -151,9 +142,7 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<MapBloc, MapState>(
       builder: (context, state) {
-        state as MapStatus;
-
-        if (state.isLoading) {
+        if (state.status == MapStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
         return MapWidget(
@@ -161,19 +150,20 @@ class _MapboxWidgetState extends State<_MapboxWidget> {
           key: const PageStorageKey('pathfinder-map'),
           onMapCreated: (controller) {
             mapController = controller;
-            controller.attribution.updateSettings(
-              AttributionSettings(marginBottom: 24, marginLeft: 88),
-            );
-            controller.compass.updateSettings(
-              CompassSettings(marginTop: 140, marginRight: 16),
-            );
-            controller.logo.updateSettings(LogoSettings(marginBottom: 24));
-            controller.scaleBar.updateSettings(
-              ScaleBarSettings(
-                position: OrnamentPosition.BOTTOM_LEFT,
-                enabled: false,
-              ),
-            );
+            controller
+              ..logo.updateSettings(LogoSettings(marginBottom: 8))
+              ..attribution.updateSettings(
+                AttributionSettings(marginBottom: 8, marginLeft: 88),
+              )
+              ..compass.updateSettings(
+                CompassSettings(marginTop: 140, marginRight: 16),
+              )
+              ..scaleBar.updateSettings(
+                ScaleBarSettings(
+                  position: OrnamentPosition.BOTTOM_LEFT,
+                  enabled: false,
+                ),
+              );
             bloc.add(MapCreated(controller));
           },
           styleUri: MapboxStyles.OUTDOORS,
