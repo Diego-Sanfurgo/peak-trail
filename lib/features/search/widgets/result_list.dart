@@ -28,6 +28,7 @@ class ResultList extends StatelessWidget {
           PlaceType.lake => Icons.water_outlined,
           PlaceType.pass => Icons.terrain_outlined,
           PlaceType.waterfall => Icons.water_drop_outlined,
+          PlaceType.park => Icons.park_outlined,
         };
 
         return ListTile(

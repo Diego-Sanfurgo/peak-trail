@@ -32,6 +32,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapMoveCamera>(_onMoveCamera);
     on<MapChangeStyle>(_onChangeStyle);
     on<MapToggleOverlay>(_onToggleOverlay);
+    on<MapFilterPlaces>(_onFilterPlaces);
   }
 
   MapboxMap? _controller;
@@ -153,6 +154,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _addOverlayById(overlayId);
     }
 
+    // Re-apply place type filter if active
+    await _applyPlaceTypeFilter(state.placeTypeFilter);
+
     emit(state.copyWith(styleUri: event.styleUri));
   }
 
@@ -195,6 +199,66 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ]);
       default:
         log('Unknown overlay: $overlayId');
+    }
+  }
+
+  Future<void> _onFilterPlaces(
+    MapFilterPlaces event,
+    Emitter<MapState> emit,
+  ) async {
+    if (_controller == null) return;
+
+    // Toggle: if the same type is selected, clear the filter
+    final newFilter = event.placeType == state.placeTypeFilter
+        ? null
+        : event.placeType;
+
+    await _applyPlaceTypeFilter(newFilter);
+    emit(state.copyWith(placeTypeFilter: () => newFilter));
+  }
+
+  Future<void> _applyPlaceTypeFilter(String? placeType) async {
+    if (_controller == null) return;
+
+    const pointsLayerID = 'places-points';
+
+    // Original filter for non-clustered points
+    final baseFilter = [
+      "!",
+      [
+        ">",
+        [
+          "coalesce",
+          ["get", "point_count"],
+          0,
+        ],
+        1,
+      ],
+    ];
+
+    if (placeType != null) {
+      // Combine base filter with type filter
+      final typeFilter = [
+        "all",
+        baseFilter,
+        [
+          "==",
+          ["get", "type"],
+          placeType,
+        ],
+      ];
+      await _controller!.style.setStyleLayerProperty(
+        pointsLayerID,
+        'filter',
+        typeFilter,
+      );
+    } else {
+      // Restore original filter (show all non-clustered points)
+      await _controller!.style.setStyleLayerProperty(
+        pointsLayerID,
+        'filter',
+        baseFilter,
+      );
     }
   }
 }

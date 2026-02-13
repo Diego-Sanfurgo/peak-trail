@@ -213,18 +213,13 @@ class LayerService {
   }
 
   static Future<void> addMountainAreaAll(MapboxMap controller) async {
-    // Asegúrate que tu URL termina exactamente así en MapConstants:
-    // ".../mvt-mountains/{z}/{x}/{y}" (sin parámetros extra si usas --no-verify-jwt)
-
     const String sourceId = "mountains-mvt-source";
     const String layerId = "mountains-fill-layer";
 
-    // 1. Añadir Fuente (Corrigiendo 'url' por 'tiles')
     await controller.style.addSource(
       VectorSource(
         id: sourceId,
         tiles: [MapConstants.mountainAreasMVT], // Correcto: Lista de templates
-        minzoom: 5, // Ajustado para que coincida con el zoom inicial de tu mapa
         maxzoom: 22,
       ),
     );
@@ -234,7 +229,7 @@ class LayerService {
         id: "debug-lines",
         sourceId: sourceId,
         sourceLayer: "mountain_areas_tiles",
-        lineColor: Colors.black.toARGB32(), // Rojo fuerte
+        lineColor: Colors.black.toARGB32(),
         lineWidth: .05, // Línea gruesa para verla fácil
         lineOpacity: 1.0,
       ),

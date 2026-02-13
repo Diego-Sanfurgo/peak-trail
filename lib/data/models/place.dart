@@ -14,7 +14,7 @@ Place placeFromJson(String str) => Place.fromJson(json.decode(str));
 
 String placeToJson(Place data) => json.encode(data.toJson());
 
-enum PlaceType { peak, lake, pass, waterfall }
+enum PlaceType { peak, lake, pass, waterfall, park }
 
 class Place {
   final String id;

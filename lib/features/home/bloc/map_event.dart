@@ -53,3 +53,13 @@ class MapToggleOverlay extends MapEvent {
   @override
   List<Object?> get props => [overlayId];
 }
+
+class MapFilterPlaces extends MapEvent {
+  MapFilterPlaces(this.placeType);
+
+  /// The type to filter by (e.g. 'peak', 'lake'). Null clears the filter.
+  final String? placeType;
+
+  @override
+  List<Object?> get props => [placeType];
+}
