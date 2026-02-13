@@ -16,8 +16,6 @@ import 'package:saltamontes/core/services/location_service.dart';
 
 import 'package:saltamontes/features/home/functions/on_map_tap_listener.dart';
 
-import 'package:saltamontes/data/providers/tracking_database.dart';
-
 import '../functions/filter_mountain_areas.dart';
 
 part 'map_event.dart';
@@ -104,25 +102,38 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // final visibleRegion = await _controller!.coordinateBoundsForCamera(
     //   event.cameraState.toCameraOptions(),
     // );
-
-    // final Map<String, dynamic> geoJson = await _mapRepo.getPeaksJson(
-    //   asString: false,
-    // );
-    // final List<BasePoint> visiblePoints = GeoJsonHelper.filterAndMapFeatures(
-    //   geoJson: geoJson,
-    //   bounds: visibleRegion,
-    // );
-    // updateMapMarkers(
-    //   visiblePoints,
-    //   _pointAnnotationManager,
-    //   _activeAnnotations,
-    // );
   }
 
   Future<void> _onMoveCamera(
     MapMoveCamera event,
     Emitter<MapState> emit,
   ) async {
+    if (_controller == null) return;
+
+    if (event.coordinates != null && event.coordinates!.isNotEmpty) {
+      final points = event.coordinates!
+          .map((c) => Point(coordinates: Position(c.longitude, c.latitude)))
+          .toList();
+
+      final cameraOptions = await _controller!.cameraForCoordinatesPadding(
+        points,
+        CameraOptions(),
+        MbxEdgeInsets(top: 50.0, left: 50.0, bottom: 50.0, right: 50.0),
+        null,
+        null,
+      );
+
+      await _controller!.flyTo(
+        cameraOptions,
+        MapAnimationOptions(duration: 1000),
+      );
+      return;
+    }
+
+    if (event.targetLocation == null && _locationService.lastPosition == null) {
+      return;
+    }
+
     LatLng coords = event.targetLocation == null
         ? LatLng(
             _locationService.lastPosition!.latitude,
@@ -130,7 +141,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           )
         : event.targetLocation!;
 
-    _controller?.flyTo(
+    await _controller!.flyTo(
       CameraOptions(
         zoom: event.zoomLevel ?? 14.0,
         center: Point(coordinates: Position(coords.longitude, coords.latitude)),
@@ -261,31 +272,4 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       );
     }
   }
-}
-
-Future<void> adjustCameraToTrack(
-  List<TrackingPoint> puntosBackend,
-  MapboxMap? controller,
-) async {
-  if (controller == null || puntosBackend.isEmpty) return;
-
-  List<Point> coordenadas = puntosBackend
-      .map((p) => Point(coordinates: Position(p.longitude, p.latitude)))
-      .toList();
-
-  // 1. Crear las opciones de cámara basándose en las coordenadas
-  // Mapbox tiene un método nativo para calcular esto sin que hagas matemáticas manuales
-  CameraOptions cameraOptions = await controller.cameraForCoordinatesPadding(
-    coordenadas,
-    CameraOptions(),
-    MbxEdgeInsets(top: 50.0, left: 50.0, bottom: 50.0, right: 50.0), // Padding
-    null,
-    null,
-  );
-
-  // 2. Mover la cámara suavemente
-  await controller.flyTo(
-    cameraOptions,
-    MapAnimationOptions(duration: 1000), // 1 segundo de animación
-  );
 }

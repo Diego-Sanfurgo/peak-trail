@@ -29,11 +29,12 @@ class MapCameraIdle extends MapEvent {
 class MapMoveCamera extends MapEvent {
   final double? zoomLevel;
   final LatLng? targetLocation;
+  final List<LatLng>? coordinates;
 
-  MapMoveCamera({this.zoomLevel, this.targetLocation});
+  MapMoveCamera({this.zoomLevel, this.targetLocation, this.coordinates});
 
   @override
-  List<Object?> get props => [zoomLevel, targetLocation];
+  List<Object?> get props => [zoomLevel, targetLocation, coordinates];
 }
 
 class MapChangeStyle extends MapEvent {
